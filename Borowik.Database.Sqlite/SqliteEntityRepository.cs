@@ -1,4 +1,5 @@
 using Borowik.Books.Entities;
+using Dapper;
 
 namespace Borowik.Database.Sqlite;
 
@@ -14,7 +15,6 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
     public async Task<Bookshelf?> GetAsync(Guid id, CancellationToken cancellationToken)
     {
         await using var connection = await _connectionProvider.CreateConnectionAsync(cancellationToken);
-
         throw new NotImplementedException();
     }
 

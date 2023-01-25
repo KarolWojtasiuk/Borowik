@@ -11,14 +11,12 @@ internal class MediatorCommander : ICommander
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
     
-    public async Task SendCommandAsync<TCommand>(TCommand command, CancellationToken cancellationToken)
-        where TCommand : ICommand
+    public async Task SendCommandAsync(ICommand command, CancellationToken cancellationToken)
     {
         await _mediator.Send(command, cancellationToken);
     }
 
-    public async Task<TResult> SendCommandAsync<TCommand, TResult>(TCommand command, CancellationToken cancellationToken)
-        where TCommand : ICommand<TResult>
+    public async Task<TResult> SendCommandAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken)
     {
         return await _mediator.Send(command, cancellationToken);
     }

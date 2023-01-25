@@ -2,9 +2,7 @@
 
 public interface ICommander
 {
-    public Task SendCommandAsync<TCommand>(TCommand command, CancellationToken cancellationToken)
-        where TCommand : ICommand;
-    
-    public Task<TResult> SendCommandAsync<TCommand, TResult>(TCommand command, CancellationToken cancellationToken)
-        where TCommand : ICommand<TResult>;
+    public Task SendCommandAsync(ICommand command, CancellationToken cancellationToken);
+
+    public Task<TResult> SendCommandAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken);
 }

@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_Solution
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Borowik.Database.Sqlite", "Borowik.Database.Sqlite\Borowik.Database.Sqlite.csproj", "{C832F89D-E5F5-4FFC-B98D-95FDDD4F2007}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Borowik.Tester", "Borowik.Tester\Borowik.Tester.csproj", "{01BAF80E-4A24-41F3-B885-07A7178DCF68}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Borowik.Gtk", "Borowik.Gtk\Borowik.Gtk.csproj", "{01BAF80E-4A24-41F3-B885-07A7178DCF68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

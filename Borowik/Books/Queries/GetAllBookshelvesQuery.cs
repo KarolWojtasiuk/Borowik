@@ -3,4 +3,4 @@ using Borowik.Queries;
 
 namespace Borowik.Books.Queries;
 
-public record GetBookshelfQuery(Guid Id) : IQuery<Bookshelf>;
+public record GetAllBookshelvesQuery : IQuery<Bookshelf[]>;

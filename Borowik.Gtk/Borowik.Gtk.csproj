@@ -6,6 +6,8 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+      <PackageReference Include="GirCore.Gtk-4.0" />
+      <PackageReference Include="GirCore.Adw-1" />
     </ItemGroup>
 
     <ItemGroup>

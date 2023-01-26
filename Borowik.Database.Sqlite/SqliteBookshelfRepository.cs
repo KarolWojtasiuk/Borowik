@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Drawing;
 using Borowik.Books.Entities;
 using Dapper;
+using Microsoft.Data.Sqlite;
 
 namespace Borowik.Database.Sqlite;
 
@@ -15,29 +16,32 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
         _connectionProvider = connectionProvider ?? throw new ArgumentNullException(nameof(connectionProvider));
     }
 
-    public async Task<Bookshelf?> GetAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Bookshelf[]> GetAllAsync(CancellationToken cancellationToken)
     {
         await using var connection = await _connectionProvider.CreateConnectionAsync(cancellationToken);
 
-        await using var bookshelfReader = await connection.ExecuteReaderAsync("""
-            SELECT ID, NAME, DESCRIPTION, COLOR, CREATED_AT FROM BOOKSHELVES
-            WHERE ID = @Id;
-        """, new { Id = id.ToString() });
+        var bookshelves = new List<Bookshelf>();
 
-        if (!await bookshelfReader.ReadAsync(cancellationToken))
-            return null;
+        await using var bookshelfReader = await connection.ExecuteReaderAsync("SELECT ID, NAME, DESCRIPTION, COLOR, CREATED_AT FROM BOOKSHELVES");
+        while (await bookshelfReader.ReadAsync(cancellationToken))
+        {
+            var id = Guid.Parse((string)bookshelfReader.GetValue("ID"));
+            var name = (string)bookshelfReader.GetValue("NAME");
+            var description = (string?)bookshelfReader.GetNullableValue("DESCRIPTION");
+            var color = (int)(long)bookshelfReader.GetValue("COLOR");
+            var createdAt = (long)bookshelfReader.GetValue("CREATED_AT");
 
-        await using var bookReader = await connection.ExecuteReaderAsync("""
-            SELECT NAME, AUTHOR, COVER, CONTENT, CREATED_AT, LAST_OPENED_AT FROM BOOKS
-            WHERE BOOKSHELF_ID = @Id;
-        """, new { Id = id.ToString() });
+            bookshelves.Add(new Bookshelf(
+                id,
+                name,
+                description,
+                await GetBooksFromBookshelf(connection, id, cancellationToken),
+                Color.FromArgb(color),
+                DateTime.SpecifyKind(new DateTime(createdAt), DateTimeKind.Utc)
+            ));
+        }
 
-        var books = new List<Book>();
-
-        while (await bookReader.ReadAsync(cancellationToken))
-            books.Add(ReadBook(bookReader));
-
-        return ReadBookshelf(bookshelfReader, books.ToArray());
+        return bookshelves.ToArray();
     }
 
     public async Task CreateAsync(Bookshelf bookshelf, CancellationToken cancellationToken)
@@ -59,6 +63,21 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
 
         await transaction.CommitAsync(cancellationToken);
     }
+    
+    private static async Task<Book[]> GetBooksFromBookshelf(SqliteConnection connection, Guid id, CancellationToken cancellationToken)
+    {
+        await using var bookReader = await connection.ExecuteReaderAsync("""
+                SELECT NAME, AUTHOR, COVER, CONTENT, CREATED_AT, LAST_OPENED_AT FROM BOOKS
+                WHERE BOOKSHELF_ID = @Id;
+            """, new { Id = id.ToString() });
+
+        var books = new List<Book>();
+
+        while (await bookReader.ReadAsync(cancellationToken))
+            books.Add(ReadBook(bookReader));
+
+        return books.ToArray();
+    }
 
     private static Book ReadBook(DbDataReader bookReader)
     {
@@ -74,24 +93,6 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
             cover is null ? null : Convert.FromBase64String(cover),
             DateTime.SpecifyKind(new DateTime(createdAt), DateTimeKind.Utc),
             lastOpenedAt is null ? null : DateTime.SpecifyKind(new DateTime(lastOpenedAt.Value), DateTimeKind.Utc)
-        );
-    }
-
-    private static Bookshelf ReadBookshelf(DbDataReader bookReader, Book[] books)
-    {
-        var id = Guid.Parse((string)bookReader.GetValue("ID"));
-        var name = (string)bookReader.GetValue("NAME");
-        var description = (string?)bookReader.GetNullableValue("DESCRIPTION");
-        var color = (int)(long)bookReader.GetValue("COLOR");
-        var createdAt = (long)bookReader.GetValue("CREATED_AT");
-
-        return new Bookshelf(
-            id,
-            name,
-            description,
-            books,
-            Color.FromArgb(color),
-            DateTime.SpecifyKind(new DateTime(createdAt), DateTimeKind.Utc)
         );
     }
 }

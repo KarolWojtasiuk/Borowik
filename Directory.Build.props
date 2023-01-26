@@ -2,6 +2,7 @@
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
+        <WarningsAsErrors>Nullable</WarningsAsErrors>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 </Project>

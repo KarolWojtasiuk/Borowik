@@ -1,7 +1,6 @@
 using System.Drawing;
 using Borowik.Books.Entities;
 using Borowik.Commands;
-using Borowik.Entities;
 using Borowik.Services;
 
 namespace Borowik.Books.Commands;
@@ -10,12 +9,12 @@ internal class CreateNewBookshelfCommandHandler : CommandHandler<CreateNewBooksh
 {
     private readonly IGuidProvider _guidProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly IEntityRepository<Bookshelf, Guid> _bookshelfRepository;
+    private readonly IBookshelfRepository _bookshelfRepository;
 
     public CreateNewBookshelfCommandHandler(
         IGuidProvider guidProvider,
         IDateTimeProvider dateTimeProvider,
-        IEntityRepository<Bookshelf, Guid> bookshelfRepository)
+        IBookshelfRepository bookshelfRepository)
     {
         _guidProvider = guidProvider ?? throw new ArgumentNullException(nameof(guidProvider));
         _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));

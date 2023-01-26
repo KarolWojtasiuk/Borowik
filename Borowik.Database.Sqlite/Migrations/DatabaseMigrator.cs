@@ -9,6 +9,7 @@ internal class DatabaseMigrator : IDatabaseMigrator
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IMigration[] _migrations;
     private readonly int _latestVersion;
+    private readonly SemaphoreSlim _semaphore = new (1);
 
     private int? _currentVersion;
 
@@ -23,7 +24,7 @@ internal class DatabaseMigrator : IDatabaseMigrator
 
     public async Task EnsureMigratedAsync(SqliteConnection connection, CancellationToken cancellationToken)
     {
-        _currentVersion ??= await GetCurrentVersionOrInitializeAsync(connection);
+        _currentVersion ??= await GetCurrentVersionOrInitializeAsync(connection, cancellationToken);
 
         if (_currentVersion > _latestVersion)
             throw new InvalidOperationException("Current version is newer than latest supported version");
@@ -36,16 +37,28 @@ internal class DatabaseMigrator : IDatabaseMigrator
         }
     }
 
-    private static async Task<int?> GetCurrentVersionOrInitializeAsync(SqliteConnection connection)
+    private async Task<int?> GetCurrentVersionOrInitializeAsync(SqliteConnection connection, CancellationToken cancellationToken)
     {
-        return await connection.ExecuteScalarAsync<int>("""
-            CREATE TABLE IF NOT EXISTS MIGRATIONS(
-                VERSION INT PRIMARY KEY,
-                MIGRATED_AT INT NOT NULL
-            );
+        await _semaphore.WaitAsync(cancellationToken);
+        try
+        {
+            // _currentVersion may be assigned after entering semaphore
+            if (_currentVersion is not null)
+                return _currentVersion;
 
-            SELECT IFNULL(MAX(VERSION), 0) FROM MIGRATIONS;        
-        """);
+            return await connection.ExecuteScalarAsync<int>("""
+                CREATE TABLE IF NOT EXISTS MIGRATIONS(
+                    VERSION INT PRIMARY KEY,
+                    MIGRATED_AT INT NOT NULL
+                );
+
+                SELECT IFNULL(MAX(VERSION), 0) FROM MIGRATIONS;
+            """);
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
     }
 
     private async Task MigrateAsync(SqliteConnection connection, IMigration migration,

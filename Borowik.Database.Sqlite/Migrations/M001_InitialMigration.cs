@@ -24,7 +24,6 @@ internal class M001_InitialMigration : IMigration
                 NAME TEXT NULL,
                 AUTHOR TEXT NULL,
                 COVER TEXT NULL,
-                CONTENT TEXT NOT NULL,
                 CREATED_AT INT NOT NULL,
                 LAST_OPENED_AT INT NULL);
 

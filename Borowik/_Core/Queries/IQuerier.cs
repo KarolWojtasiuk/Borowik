@@ -2,6 +2,5 @@ namespace Borowik.Queries;
 
 public interface IQuerier
 {
-    public Task<TResult> SendQueryAsync<TQuery, TResult>(TQuery query, CancellationToken cancellationToken)
-        where TQuery : IQuery<TResult>;
+    public Task<TResult> SendQueryAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken);
 }

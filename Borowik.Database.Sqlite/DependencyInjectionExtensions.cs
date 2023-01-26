@@ -10,7 +10,6 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddBorowikSqlite(this IServiceCollection services)
     {
         return services
-            .AddSingleton<ISqliteDateTimeConverter, SqliteDateTimeConverter>()
             .AddSingleton<IEntityRepository<Bookshelf, Guid>, SqliteBookshelfRepository>()
             .AddSingleton<ISqliteConnectionProvider, SqliteConnectionProvider>()
             .AddSingleton<IDatabaseMigrator, DatabaseMigrator>()

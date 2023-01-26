@@ -11,8 +11,7 @@ internal class MediatorQuerier : IQuerier
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
-    public async Task<TResult> SendQueryAsync<TQuery, TResult>(TQuery query, CancellationToken cancellationToken)
-        where TQuery : IQuery<TResult>
+    public async Task<TResult> SendQueryAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken)
     {
         return await _mediator.Send(query, cancellationToken);
     }

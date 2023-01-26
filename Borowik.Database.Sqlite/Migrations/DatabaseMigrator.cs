@@ -7,7 +7,6 @@ namespace Borowik.Database.Sqlite.Migrations;
 internal class DatabaseMigrator : IDatabaseMigrator
 {
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly ISqliteDateTimeConverter _dateTimeConverter;
     private readonly IMigration[] _migrations;
     private readonly int _latestVersion;
 
@@ -15,11 +14,9 @@ internal class DatabaseMigrator : IDatabaseMigrator
 
     public DatabaseMigrator(
         IEnumerable<IMigration> migrations,
-        IDateTimeProvider dateTimeProvider,
-        ISqliteDateTimeConverter dateTimeConverter)
+        IDateTimeProvider dateTimeProvider)
     {
         _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
-        _dateTimeConverter = dateTimeConverter ?? throw new ArgumentNullException(nameof(dateTimeConverter));
         _migrations = migrations.OrderBy(m => m.Version).ToArray();
         _latestVersion = _migrations.Last().Version;
     }
@@ -63,7 +60,7 @@ internal class DatabaseMigrator : IDatabaseMigrator
          """, new
         {
             Version = migration.Version,
-            MigratedAt = _dateTimeConverter.Convert(_dateTimeProvider.GetUtcNew())
+            MigratedAt = _dateTimeProvider.GetUtcNew().Ticks
         });
 
         await transaction.CommitAsync(cancellationToken);

@@ -1,3 +1,5 @@
+using System.Data;
+using System.Data.Common;
 using Borowik.Database.Sqlite.Migrations;
 using Microsoft.Data.Sqlite;
 
@@ -20,5 +22,15 @@ internal class SqliteConnectionProvider : ISqliteConnectionProvider
         await _databaseMigrator.EnsureMigratedAsync(connection, cancellationToken);
 
         return connection;
+    }
+}
+
+internal static class DbDataReaderExtensions
+{
+    public static object? GetNullableValue(this DbDataReader dataReader, string column)
+    {
+        return dataReader.IsDBNull(column)
+            ? null
+            : dataReader.GetValue(column);
     }
 }

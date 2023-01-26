@@ -29,7 +29,7 @@ internal class CreateNewBookshelfCommandHandler : CommandHandler<CreateNewBooksh
             command.Name,
             string.Empty,
             Array.Empty<Book>(),
-            Color.Empty,
+            Color.FromArgb(Color.White.ToArgb()), // Without this C# interprets color as KnownColor
             _dateTimeProvider.GetUtcNew());
 
         await _bookshelfRepository.CreateAsync(bookshelf, cancellationToken);

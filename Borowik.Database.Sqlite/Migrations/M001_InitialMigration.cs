@@ -21,7 +21,7 @@ internal class M001_InitialMigration : IMigration
             CREATE TABLE BOOKS(
                 ID TEXT PRIMARY KEY,
                 BOOKSHELF_ID TEXT NOT NULL,
-                NAME TEXT NULL,
+                NAME TEXT NOT NULL,
                 AUTHOR TEXT NULL,
                 COVER TEXT NULL,
                 CREATED_AT INT NOT NULL,

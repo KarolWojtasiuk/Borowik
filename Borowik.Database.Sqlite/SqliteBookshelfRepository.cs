@@ -67,7 +67,7 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
     private static async Task<Book[]> GetBooksFromBookshelf(SqliteConnection connection, Guid id, CancellationToken cancellationToken)
     {
         await using var bookReader = await connection.ExecuteReaderAsync("""
-                SELECT NAME, AUTHOR, COVER, CONTENT, CREATED_AT, LAST_OPENED_AT FROM BOOKS
+                SELECT NAME, AUTHOR, COVER, CREATED_AT, LAST_OPENED_AT FROM BOOKS
                 WHERE BOOKSHELF_ID = @Id;
             """, new { Id = id.ToString() });
 
@@ -81,7 +81,7 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
 
     private static Book ReadBook(DbDataReader bookReader)
     {
-        var name = (string?)bookReader.GetNullableValue("NAME");
+        var name = (string)bookReader.GetValue("NAME");
         var author = (string?)bookReader.GetNullableValue("AUTHOR");
         var cover = (string?)bookReader.GetNullableValue("COVER");
         var createdAt = (long)bookReader.GetValue("CREATED_AT");

@@ -3,4 +3,4 @@ using Borowik.Commands;
 
 namespace Borowik.Books.Commands;
 
-public record CreateNewBookshelfCommand(string Name) : ICommand<Bookshelf>;
+public record CreateBookshelfCommand(string Name) : ICommand<Bookshelf>;

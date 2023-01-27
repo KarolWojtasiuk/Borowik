@@ -5,13 +5,13 @@ using Borowik.Services;
 
 namespace Borowik.Books.Commands;
 
-internal class CreateNewBookshelfCommandHandler : CommandHandler<CreateNewBookshelfCommand, Bookshelf>
+internal class CreateBookshelfCommandHandler : CommandHandler<CreateBookshelfCommand, Bookshelf>
 {
     private readonly IGuidProvider _guidProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IBookshelfRepository _bookshelfRepository;
 
-    public CreateNewBookshelfCommandHandler(
+    public CreateBookshelfCommandHandler(
         IGuidProvider guidProvider,
         IDateTimeProvider dateTimeProvider,
         IBookshelfRepository bookshelfRepository)
@@ -21,7 +21,7 @@ internal class CreateNewBookshelfCommandHandler : CommandHandler<CreateNewBooksh
         _bookshelfRepository = bookshelfRepository ?? throw new ArgumentNullException(nameof(bookshelfRepository));
     }
 
-    protected override async Task<Bookshelf> HandleAsync(CreateNewBookshelfCommand command, CancellationToken cancellationToken)
+    protected override async Task<Bookshelf> HandleAsync(CreateBookshelfCommand command, CancellationToken cancellationToken)
     {
         var bookshelf = new Bookshelf(
             _guidProvider.Generate(),

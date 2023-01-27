@@ -15,6 +15,9 @@ internal class NewBookView : Box
     {
         _commander = commander ?? throw new ArgumentNullException(nameof(commander));
 
+        Orientation = Orientation.Vertical;
+        Spacing = 5;
+
         _entry = Entry.New();
         var button = Button.NewWithLabel("Create");
         button.OnClicked += Test;

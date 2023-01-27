@@ -81,6 +81,7 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
 
     private static Book ReadBook(DbDataReader bookReader)
     {
+        var id = Guid.Parse((string)bookReader.GetValue("ID"));
         var name = (string)bookReader.GetValue("NAME");
         var author = (string?)bookReader.GetNullableValue("AUTHOR");
         var cover = (string?)bookReader.GetNullableValue("COVER");
@@ -88,6 +89,7 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
         var lastOpenedAt = (long?)bookReader.GetNullableValue("LAST_OPENED_AT");
 
         return new Book(
+            id,
             name,
             author,
             cover is null ? null : Convert.FromBase64String(cover),

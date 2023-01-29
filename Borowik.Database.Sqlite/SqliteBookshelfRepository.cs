@@ -67,7 +67,7 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
     private static async Task<Book[]> GetBooksFromBookshelf(SqliteConnection connection, Guid id, CancellationToken cancellationToken)
     {
         await using var bookReader = await connection.ExecuteReaderAsync("""
-                SELECT NAME, AUTHOR, COVER, CREATED_AT, LAST_OPENED_AT FROM BOOKS
+                SELECT ID, NAME, AUTHOR, COVER, CREATED_AT, LAST_OPENED_AT FROM BOOKS
                 WHERE BOOKSHELF_ID = @Id;
             """, new { Id = id.ToString() });
 

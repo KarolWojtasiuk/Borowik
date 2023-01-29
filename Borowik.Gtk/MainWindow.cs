@@ -1,9 +1,11 @@
+using Borowik.Gtk.Widgets;
 using Gtk;
 
-namespace Borowik.Gtk.Widgets;
+namespace Borowik.Gtk;
 
 internal class MainWindow : Adw.ApplicationWindow
 {
+    
     public MainWindow(Application application, BookshelvesView bookshelvesView)
     {
         Application = application ?? throw new ArgumentNullException(nameof(application));

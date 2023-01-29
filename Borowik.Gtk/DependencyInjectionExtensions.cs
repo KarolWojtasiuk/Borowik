@@ -1,4 +1,3 @@
-using Borowik.Gtk.Widgets.Providers;
 using Gtk;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +8,7 @@ internal static class DependencyInjectionExtensions
     public static IServiceCollection AddBorowikGtk(this IServiceCollection services)
     {
         return services
+            .AddSingleton<MainWindow>()
             .AddWidgets()
             .AddWidgetProviders();
     }
@@ -17,6 +17,7 @@ internal static class DependencyInjectionExtensions
     {
         var widgetTypes = typeof(DependencyInjectionExtensions).Assembly
             .GetTypes()
+            .Where(t => t.Namespace == "Borowik.Gtk.Widgets")
             .Where(t => t.IsAssignableTo(typeof(Widget)))
             .Where(t => !t.IsAbstract);
 

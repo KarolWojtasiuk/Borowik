@@ -1,7 +1,6 @@
 ﻿using Borowik;
 using Borowik.Database.Sqlite;
 using Borowik.Gtk;
-using Borowik.Gtk.Widgets;
 using Gtk;
 using Microsoft.Extensions.DependencyInjection;
 

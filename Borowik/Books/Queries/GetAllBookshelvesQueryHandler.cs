@@ -14,6 +14,6 @@ internal class GetAllBookshelvesQueryHandler : QueryHandler<GetAllBookshelvesQue
 
     protected override async Task<Bookshelf[]> HandleAsync(GetAllBookshelvesQuery query, CancellationToken cancellationToken)
     {
-        return await _bookshelfRepository.GetAllAsync(cancellationToken);
+        return await _bookshelfRepository.GetAllBookshelvesAsync(cancellationToken);
     }
 }

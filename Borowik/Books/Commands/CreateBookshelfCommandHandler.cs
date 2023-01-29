@@ -31,7 +31,7 @@ internal class CreateBookshelfCommandHandler : CommandHandler<CreateBookshelfCom
             Color.FromArgb(Color.White.ToArgb()), // Without this C# interprets color as KnownColor
             _dateTimeProvider.GetUtcNew());
 
-        await _bookshelfRepository.CreateAsync(bookshelf, cancellationToken);
+        await _bookshelfRepository.CreateBookshelfAsync(bookshelf, cancellationToken);
 
         return bookshelf;
     }

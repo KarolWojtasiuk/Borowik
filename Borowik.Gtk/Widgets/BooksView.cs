@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Borowik.Books.Entities;
 using Borowik.Gtk.Widgets.Providers;
 using Gtk;
@@ -23,6 +24,12 @@ internal class BooksView : Box
         foreach (var book in bookshelf.Books)
             Append(_bookViewProvider.CreateFor(book));
 
-        Append(_newBookViewProvider.CreateFor(bookshelf));
+        var newBookView = _newBookViewProvider.CreateFor(bookshelf);
+        newBookView.Created += (_, book) =>
+        {
+            //TODO
+            Debugger.Break();
+        };
+        Append(newBookView);
     }
 }

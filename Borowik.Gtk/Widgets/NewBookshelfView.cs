@@ -33,7 +33,7 @@ internal class NewBookshelfView : Box
     private async void Test(Button sender, EventArgs args)
     {
         var name = _entry.GetText();
-        var bookshelf = await _commander.SendCommandAsync(new CreateBookshelfCommand(name), CancellationToken.None);
+        var bookshelf = await _commander.SendCommandAsync(new CreateBookshelfCommand(name));
         Created?.Invoke(this, bookshelf);
     }
 }

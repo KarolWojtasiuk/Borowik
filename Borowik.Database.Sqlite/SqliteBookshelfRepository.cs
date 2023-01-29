@@ -1,6 +1,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Drawing;
+using System.Text.Json;
 using Borowik.Books.Entities;
 using Dapper;
 using Microsoft.Data.Sqlite;
@@ -16,13 +17,14 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
         _connectionProvider = connectionProvider ?? throw new ArgumentNullException(nameof(connectionProvider));
     }
 
-    public async Task<Bookshelf[]> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<Bookshelf[]> GetAllBookshelvesAsync(CancellationToken cancellationToken)
     {
         await using var connection = await _connectionProvider.CreateConnectionAsync(cancellationToken);
 
         var bookshelves = new List<Bookshelf>();
 
-        await using var bookshelfReader = await connection.ExecuteReaderAsync("SELECT ID, NAME, DESCRIPTION, COLOR, CREATED_AT FROM BOOKSHELVES");
+        await using var bookshelfReader =
+            await connection.ExecuteReaderAsync("SELECT ID, NAME, DESCRIPTION, COLOR, CREATED_AT FROM BOOKSHELVES");
         while (await bookshelfReader.ReadAsync(cancellationToken))
         {
             var id = Guid.Parse((string)bookshelfReader.GetValue("ID"));
@@ -44,7 +46,50 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
         return bookshelves.ToArray();
     }
 
-    public async Task CreateAsync(Bookshelf bookshelf, CancellationToken cancellationToken)
+    public async Task CreateBookAsync(Guid bookshelfId, Book book, BookContent content,
+        CancellationToken cancellationToken)
+    {
+        await using var connection = await _connectionProvider.CreateConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        await connection.ExecuteAsync("""
+            INSERT INTO BOOKS (ID, BOOKSHELF_ID, NAME, CONTENT, AUTHOR, COVER, CREATED_AT, LAST_OPENED_AT)
+                VALUES (@Id, @BookshelfId, @Name, @Content, @Author, @Cover, @CreatedAt, @LastOpenedAt);
+        """, new
+        {
+            Id = book.Id.ToString(),
+            BookshelfId = bookshelfId.ToString(),
+            Name = book.Metadata.Name,
+            Content = JsonSerializer.Serialize(content.RootNode),
+            Author = book.Metadata.Author,
+            Cover = book.Metadata.Cover is null ? null : Convert.ToBase64String(book.Metadata.Cover),
+            CreatedAt = book.CreatedAt.Ticks,
+            LastOpenedAt = book.LastOpenedAt?.Ticks ?? default,
+        });
+
+        await transaction.CommitAsync(cancellationToken);
+    }
+
+    public async Task<BookContent> OpenBookAsync(
+        Guid bookId,
+        DateTime? lastOpenedAt,
+        CancellationToken cancellationToken)
+    {
+        await using var connection = await _connectionProvider.CreateConnectionAsync(cancellationToken);
+
+        await using var reader = await connection.ExecuteReaderAsync("""
+            SELECT CONTENT FROM BOOKS WHERE ID = @Id
+        """, new { Id = bookId.ToString() });
+
+        await reader.ReadAsync(cancellationToken);
+        var rootNodeJson = (string)reader.GetValue("CONTENT");
+        var rootNode = JsonSerializer.Deserialize<IBookContentNode>(rootNodeJson)
+                       ?? throw new InvalidOperationException("Cannot read book content from database");
+
+        return new BookContent(bookId, rootNode);
+    }
+
+    public async Task CreateBookshelfAsync(Bookshelf bookshelf, CancellationToken cancellationToken)
     {
         await using var connection = await _connectionProvider.CreateConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
@@ -63,8 +108,9 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
 
         await transaction.CommitAsync(cancellationToken);
     }
-    
-    private static async Task<Book[]> GetBooksFromBookshelf(SqliteConnection connection, Guid id, CancellationToken cancellationToken)
+
+    private static async Task<Book[]> GetBooksFromBookshelf(SqliteConnection connection, Guid id,
+        CancellationToken cancellationToken)
     {
         await using var bookReader = await connection.ExecuteReaderAsync("""
                 SELECT ID, NAME, AUTHOR, COVER, CREATED_AT, LAST_OPENED_AT FROM BOOKS
@@ -90,9 +136,7 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
 
         return new Book(
             id,
-            name,
-            author,
-            cover is null ? null : Convert.FromBase64String(cover),
+            new BookMetadata(name, author, cover is null ? null : Convert.FromBase64String(cover)),
             DateTime.SpecifyKind(new DateTime(createdAt), DateTimeKind.Utc),
             lastOpenedAt is null ? null : DateTime.SpecifyKind(new DateTime(lastOpenedAt.Value), DateTimeKind.Utc)
         );

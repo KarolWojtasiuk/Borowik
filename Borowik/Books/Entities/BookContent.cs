@@ -1,3 +1,5 @@
+using Borowik.Entities;
+
 namespace Borowik.Books.Entities;
 
-public record BookContent(IBookContentNode RootNode);
+public record BookContent(Guid Id, IBookContentNode RootNode) : IEntity<Guid>;

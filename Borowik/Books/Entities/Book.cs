@@ -1,3 +1,3 @@
 namespace Borowik.Books.Entities;
 
-public record Book(Guid Id, string Name, string? Author, byte[]? Cover, DateTime CreatedAt, DateTime? LastOpenedAt);
+public record Book(Guid Id, BookMetadata Metadata, DateTime CreatedAt, DateTime? LastOpenedAt);

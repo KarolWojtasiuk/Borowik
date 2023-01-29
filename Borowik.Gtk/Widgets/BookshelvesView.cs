@@ -41,7 +41,7 @@ internal class BookshelvesView : Stack
         SetVisibleChildName("loading");
 
         await Task.Delay(TimeSpan.FromSeconds(1)); //TODO
-        var bookshelves = await _querier.SendQueryAsync(new GetAllBookshelvesQuery(), CancellationToken.None);
+        var bookshelves = await _querier.SendQueryAsync(new GetAllBookshelvesQuery());
 
         var stack = Stack.New();
         foreach (var bookshelf in bookshelves)

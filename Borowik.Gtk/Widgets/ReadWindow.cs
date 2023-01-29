@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Borowik.Books.Entities;
 using Gtk;
 
@@ -19,8 +20,12 @@ internal class ReadWindow : Adw.Window
 
         var box = Box.New(Orientation.Vertical, 0);
         box.Append(Adw.HeaderBar.New());
-        box.Append(Label.New(nameof(ReadWindow)));
-        box.Append(Label.New(_book.Name));
+        box.Append(Label.New($"DEBUG: {_book.Metadata.Name} ({_book.Id})"));
+        box.Append(Separator.New(Orientation.Horizontal));
+        box.Append(Label.New(
+            JsonSerializer.Serialize(
+                _content.RootNode,
+                new JsonSerializerOptions { WriteIndented = true })));
         SetContent(box);
     }
 }

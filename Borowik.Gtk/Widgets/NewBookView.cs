@@ -1,3 +1,5 @@
+using System.Text;
+using Borowik.Books.Commands;
 using Borowik.Books.Entities;
 using Borowik.Commands;
 using Gtk;
@@ -8,11 +10,13 @@ internal class NewBookView : Box
 {
     public event EventHandler<Book>? Created;
 
+    private readonly Bookshelf _bookshelf;
     private readonly ICommander _commander;
     private readonly Entry _entry;
 
     public NewBookView(Bookshelf bookshelf, ICommander commander)
     {
+        _bookshelf = bookshelf ?? throw new ArgumentNullException(nameof(bookshelf));
         _commander = commander ?? throw new ArgumentNullException(nameof(commander));
 
         Orientation = Orientation.Vertical;
@@ -28,8 +32,10 @@ internal class NewBookView : Box
 
     private async void Test(Button sender, EventArgs args)
     {
-        var name = _entry.GetText();
+        var text = _entry.GetText();
+        var bytes = Encoding.UTF8.GetBytes(text);
+        var book = await _commander.SendCommandAsync(new ImportBookCommand(_bookshelf.Id, RawBookType.PlainText, bytes));
 
-        throw new NotImplementedException();
+        Created?.Invoke(this, book);
     }
 }

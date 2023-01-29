@@ -22,14 +22,11 @@ internal class M001_InitialMigration : IMigration
                 ID TEXT PRIMARY KEY,
                 BOOKSHELF_ID TEXT NOT NULL,
                 NAME TEXT NOT NULL,
+                CONTENT TEXT NOT NULL,
                 AUTHOR TEXT NULL,
                 COVER TEXT NULL,
                 CREATED_AT INT NOT NULL,
                 LAST_OPENED_AT INT NULL);
-
-            CREATE TABLE BOOK_CONTENTS(
-                BOOK_ID TEXT PRIMARY KEY,
-                CONTENT TEXT NOT NULL)
             """);
     }
 }

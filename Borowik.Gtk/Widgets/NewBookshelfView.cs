@@ -10,29 +10,30 @@ internal class NewBookshelfView : Box
     public event EventHandler<Bookshelf>? Created;
 
     private readonly ICommander _commander;
-    private readonly Entry _entry;
+    private readonly Entry _nameEntry = Entry.New();
 
     public NewBookshelfView(ICommander commander)
     {
         _commander = commander ?? throw new ArgumentNullException(nameof(commander));
 
+        BuildWidget();
+    }
+
+    private void BuildWidget()
+    {
         Orientation = Orientation.Vertical;
         Spacing = 5;
-        Halign = Align.Center;
-        Valign = Align.Center;
-        Hexpand = true;
 
-        _entry = Entry.New();
         var button = Button.NewWithLabel("Create");
         button.OnClicked += Test;
 
-        Append(_entry);
+        Append(_nameEntry);
         Append(button);
     }
 
     private async void Test(Button sender, EventArgs args)
     {
-        var name = _entry.GetText();
+        var name = _nameEntry.GetText();
         var bookshelf = await _commander.SendCommandAsync(new CreateBookshelfCommand(name));
         Created?.Invoke(this, bookshelf);
     }

@@ -1,3 +1,4 @@
+using Borowik.Books.Entities;
 using Borowik.Books.Queries;
 using Borowik.Gtk.Widgets.Providers;
 using Borowik.Queries;
@@ -11,7 +12,7 @@ internal class BookshelvesView : Stack
     private readonly IBookshelfViewProvider _bookshelfViewProvider;
     private readonly INewBookshelfViewProvider _newBookshelfViewProvider;
 
-    private readonly Spinner _spinner;
+    private readonly Spinner _spinner = Spinner.New();
     private Box? _contentBox;
 
     public BookshelvesView(
@@ -21,12 +22,16 @@ internal class BookshelvesView : Stack
     {
         _querier = querier ?? throw new ArgumentNullException(nameof(querier));
         _bookshelfViewProvider = bookshelfViewProvider ?? throw new ArgumentNullException(nameof(bookshelfViewProvider));
-        _newBookshelfViewProvider =
-            newBookshelfViewProvider ?? throw new ArgumentNullException(nameof(newBookshelfViewProvider));
+        _newBookshelfViewProvider = newBookshelfViewProvider ?? throw new ArgumentNullException(nameof(newBookshelfViewProvider));
 
+        BuildWidget();
+    }
+
+    private void BuildWidget()
+    {
         Vexpand = true;
+        MarginEnd = 5;
 
-        _spinner = Spinner.New();
         _spinner.Halign = Align.Center;
         _spinner.SetSizeRequest(100, 100);
 
@@ -40,19 +45,26 @@ internal class BookshelvesView : Stack
         _spinner.Spinning = true;
         SetVisibleChildName("loading");
 
-        await Task.Delay(TimeSpan.FromSeconds(1)); //TODO
         var bookshelves = await _querier.SendQueryAsync(new GetAllBookshelvesQuery());
+        BuildContent(bookshelves);
 
+        SetVisibleChildName("content");
+        _spinner.Spinning = false;
+    }
+
+    private void BuildContent(Bookshelf[] bookshelves)
+    {
         var stack = Stack.New();
         foreach (var bookshelf in bookshelves)
-            stack.AddTitled(
-                _bookshelfViewProvider.CreateFor(bookshelf),
-                bookshelf.Id.ToString(),
-                bookshelf.Name);
+        {
+            var bookshelfView = _bookshelfViewProvider.CreateFor(bookshelf);
+            bookshelfView.Updated += (_, _) => _ = LoadBookshelvesAsync();
+            stack.AddTitled(bookshelfView, bookshelf.Id.ToString(), bookshelf.Name);
+        }
 
         var newBookshelfView = _newBookshelfViewProvider.Create();
         stack.AddTitled(newBookshelfView, "new", "<New Bookshelf>");
-        newBookshelfView.Created += (_, _) => LoadBookshelvesAsync();
+        newBookshelfView.Created += (_, _) => _ = LoadBookshelvesAsync();
 
         var stackSidebar = StackSidebar.New();
         stackSidebar.Stack = stack;
@@ -64,8 +76,5 @@ internal class BookshelvesView : Stack
         _contentBox.Append(stackSidebar);
         _contentBox.Append(Separator.New(Orientation.Horizontal));
         _contentBox.Append(stack);
-
-        SetVisibleChildName("content");
-        _spinner.Spinning = false;
     }
 }

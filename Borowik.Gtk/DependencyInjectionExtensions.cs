@@ -1,4 +1,3 @@
-using Gtk;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Borowik.Gtk;

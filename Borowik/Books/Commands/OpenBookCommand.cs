@@ -3,4 +3,4 @@ using Borowik.Commands;
 
 namespace Borowik.Books.Commands;
 
-public record OpenBookCommand(Guid Id) : ICommand<BookContent>;
+public record OpenBookCommand(Guid Id) : ICommand<(BookContent, DateTime)>;

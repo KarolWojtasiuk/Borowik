@@ -67,7 +67,7 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
             Author = book.Metadata.Author,
             Cover = book.Metadata.Cover is null ? null : Convert.ToBase64String(book.Metadata.Cover),
             CreatedAt = book.CreatedAt.Ticks,
-            LastOpenedAt = book.LastOpenedAt?.Ticks ?? default,
+            LastOpenedAt = book.LastOpenedAt?.Ticks
         });
 
         await transaction.CommitAsync(cancellationToken);
@@ -75,14 +75,15 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
 
     public async Task<BookContent> OpenBookAsync(
         Guid bookId,
-        DateTime? lastOpenedAt,
+        DateTime lastOpenedAt,
         CancellationToken cancellationToken)
     {
         await using var connection = await _connectionProvider.CreateConnectionAsync(cancellationToken);
 
         await using var reader = await connection.ExecuteReaderAsync("""
-            SELECT CONTENT FROM BOOKS WHERE ID = @Id
-        """, new { Id = bookId.ToString() });
+            SELECT CONTENT FROM BOOKS WHERE ID = @Id;
+            UPDATE BOOKS SET LAST_OPENED_AT = @LastOpenedAt WHERE ID = @Id;
+        """, new { Id = bookId.ToString(), LastOpenedAt = lastOpenedAt.Ticks });
 
         await reader.ReadAsync(cancellationToken);
         var rootNodeJson = (string)reader.GetValue("CONTENT");

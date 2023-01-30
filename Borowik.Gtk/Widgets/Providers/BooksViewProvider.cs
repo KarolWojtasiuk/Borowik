@@ -10,16 +10,16 @@ internal interface IBooksViewProvider
 internal class BooksViewProvider : IBooksViewProvider
 {
     private readonly IBookViewProvider _bookViewProvider;
-    private readonly INewBookViewProvider _newBookViewProvider;
+    private readonly IImportBookViewProvider _importBookViewProvider;
 
-    public BooksViewProvider(IBookViewProvider bookViewProvider, INewBookViewProvider newBookViewProvider)
+    public BooksViewProvider(IBookViewProvider bookViewProvider, IImportBookViewProvider importBookViewProvider)
     {
         _bookViewProvider = bookViewProvider ?? throw new ArgumentNullException(nameof(bookViewProvider));
-        _newBookViewProvider = newBookViewProvider ?? throw new ArgumentNullException(nameof(newBookViewProvider));
+        _importBookViewProvider = importBookViewProvider ?? throw new ArgumentNullException(nameof(importBookViewProvider));
     }
     
     public BooksView CreateFor(Bookshelf bookshelf)
     {
-        return new BooksView(bookshelf, _bookViewProvider, _newBookViewProvider);
+        return new BooksView(bookshelf, _bookViewProvider, _importBookViewProvider);
     }
 }

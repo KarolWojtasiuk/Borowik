@@ -6,6 +6,8 @@ namespace Borowik.Gtk.Widgets;
 
 internal class BookshelfView : Box
 {
+    public event EventHandler? Updated;
+
     private readonly Bookshelf _bookshelf;
     private readonly IBooksViewProvider _booksViewProvider;
 
@@ -16,6 +18,11 @@ internal class BookshelfView : Box
         _bookshelf = bookshelf ?? throw new ArgumentNullException(nameof(bookshelf));
         _booksViewProvider = booksViewProvider ?? throw new ArgumentNullException(nameof(booksViewProvider));
 
+        BuildWidget();
+    }
+
+    private void BuildWidget()
+    {
         Orientation = Orientation.Vertical;
         Spacing = 5;
 
@@ -26,6 +33,14 @@ internal class BookshelfView : Box
         Append(Label.New($"CREATED_AT: {_bookshelf.CreatedAt}"));
         Append(Separator.New(Orientation.Horizontal));
         Append(Label.New($"BOOKS: {_bookshelf.Books.Length}"));
-        Append(_booksViewProvider.CreateFor(_bookshelf));
+
+        var booksView = _booksViewProvider.CreateFor(_bookshelf);
+        booksView.Updated += (_, _) => Updated?.Invoke(this, EventArgs.Empty);
+
+        var scrollBox = ScrolledWindow.New();
+        scrollBox.Vexpand = true;
+        scrollBox.Hexpand = true;
+        scrollBox.SetChild(booksView);
+        Append(scrollBox);
     }
 }

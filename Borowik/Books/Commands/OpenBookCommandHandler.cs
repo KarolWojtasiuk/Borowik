@@ -4,7 +4,7 @@ using Borowik.Services;
 
 namespace Borowik.Books.Commands;
 
-internal class OpenBookCommandHandler : CommandHandler<OpenBookCommand, BookContent>
+internal class OpenBookCommandHandler : CommandHandler<OpenBookCommand, (BookContent, DateTime)>
 {
     private readonly IBookshelfRepository _bookshelfRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -17,9 +17,10 @@ internal class OpenBookCommandHandler : CommandHandler<OpenBookCommand, BookCont
         _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
     }
 
-    protected override Task<BookContent> HandleAsync(OpenBookCommand command, CancellationToken cancellationToken)
+    protected override async Task<(BookContent, DateTime)> HandleAsync(OpenBookCommand command, CancellationToken cancellationToken)
     {
         var lastOpenedAt = _dateTimeProvider.GetUtcNew();
-        return _bookshelfRepository.OpenBookAsync(command.Id, lastOpenedAt, cancellationToken);
+        var content = await _bookshelfRepository.OpenBookAsync(command.Id, lastOpenedAt, cancellationToken);
+        return (content, lastOpenedAt);
     }
 }

@@ -11,16 +11,16 @@ internal interface IBookViewProvider
 internal class BookViewProvider : IBookViewProvider
 {
     private readonly ICommander _commander;
-    private readonly IReadWindowProvider _readWindowProvider;
+    private readonly IReadBookWindowProvider _readBookWindowProvider;
 
-    public BookViewProvider(ICommander commander, IReadWindowProvider readWindowProvider)
+    public BookViewProvider(ICommander commander, IReadBookWindowProvider readBookWindowProvider)
     {
         _commander = commander ?? throw new ArgumentNullException(nameof(commander));
-        _readWindowProvider = readWindowProvider ?? throw new ArgumentNullException(nameof(readWindowProvider));
+        _readBookWindowProvider = readBookWindowProvider ?? throw new ArgumentNullException(nameof(readBookWindowProvider));
     }
 
     public BookView CreateFor(Book book)
     {
-        return new BookView(book, _commander, _readWindowProvider);
+        return new BookView(book, _commander, _readBookWindowProvider);
     }
 }

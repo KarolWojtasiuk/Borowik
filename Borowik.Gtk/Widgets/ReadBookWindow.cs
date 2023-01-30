@@ -4,17 +4,22 @@ using Gtk;
 
 namespace Borowik.Gtk.Widgets;
 
-internal class ReadWindow : Adw.Window
+internal class ReadBookWindow : Adw.Window
 {
     private readonly Book _book;
     private readonly BookContent _content;
 
-    public ReadWindow(Application application, Book book, BookContent content)
+    public ReadBookWindow(Application application, Book book, BookContent content)
     {
         Application = application ?? throw new ArgumentNullException(nameof(application));
         _book = book ?? throw new ArgumentNullException(nameof(book));
         _content = content ?? throw new ArgumentNullException(nameof(content));
 
+        BuildWidget();
+    }
+
+    private void BuildWidget()
+    {
         DefaultWidth = 800;
         DefaultHeight = 600;
 

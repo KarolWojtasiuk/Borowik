@@ -1,35 +1,39 @@
-using System.Diagnostics;
 using Borowik.Books.Entities;
 using Borowik.Gtk.Widgets.Providers;
 using Gtk;
 
 namespace Borowik.Gtk.Widgets;
 
-internal class BooksView : Box
+internal class BooksView : FlowBox
 {
+    public event EventHandler? Updated;
+
+    private readonly Bookshelf _bookshelf;
     private readonly IBookViewProvider _bookViewProvider;
-    private readonly INewBookViewProvider _newBookViewProvider;
+    private readonly IImportBookViewProvider _importBookViewProvider;
 
     public BooksView(
         Bookshelf bookshelf,
         IBookViewProvider bookViewProvider,
-        INewBookViewProvider newBookViewProvider)
+        IImportBookViewProvider importBookViewProvider)
     {
+        _bookshelf = bookshelf ?? throw new ArgumentNullException(nameof(bookshelf));
         _bookViewProvider = bookViewProvider ?? throw new ArgumentNullException(nameof(bookViewProvider));
-        _newBookViewProvider = newBookViewProvider ?? throw new ArgumentNullException(nameof(newBookViewProvider));
+        _importBookViewProvider = importBookViewProvider ?? throw new ArgumentNullException(nameof(importBookViewProvider));
 
+        BuildWidget();
+    }
+
+    private void BuildWidget()
+    {
         Orientation = Orientation.Horizontal;
-        Spacing = 5;
+        SelectionMode = SelectionMode.None;
 
-        foreach (var book in bookshelf.Books)
+        foreach (var book in _bookshelf.Books)
             Append(_bookViewProvider.CreateFor(book));
 
-        var newBookView = _newBookViewProvider.CreateFor(bookshelf);
-        newBookView.Created += (_, book) =>
-        {
-            //TODO
-            Debugger.Break();
-        };
+        var newBookView = _importBookViewProvider.CreateFor(_bookshelf);
+        newBookView.Created += (_, _) => Updated?.Invoke(this, EventArgs.Empty);
         Append(newBookView);
     }
 }

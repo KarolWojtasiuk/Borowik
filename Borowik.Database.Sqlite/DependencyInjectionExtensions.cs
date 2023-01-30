@@ -1,7 +1,6 @@
-using Borowik.Books.Entities;
 using Borowik.Database.Sqlite.Migrations;
-using Borowik.Entities;
 using Microsoft.Extensions.DependencyInjection;
+using Scrutor;
 
 namespace Borowik.Database.Sqlite;
 
@@ -10,22 +9,14 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddBorowikSqlite(this IServiceCollection services)
     {
         return services
-            .AddSingleton<IBookshelfRepository, SqliteBookshelfRepository>()
-            .AddSingleton<ISqliteConnectionProvider, SqliteConnectionProvider>()
-            .AddSingleton<IDatabaseMigrator, DatabaseMigrator>()
-            .AddMigrations();
-    }
+            .Scan(s =>
+                s.FromAssemblies(typeof(DependencyInjectionExtensions).Assembly)
+                    .AddClasses(c => c.WithAttribute<ServiceDescriptorAttribute>())
+                    .UsingAttributes())
 
-    private static IServiceCollection AddMigrations(this IServiceCollection services)
-    {
-        var migrationTypes = typeof(IMigration).Assembly
-            .GetTypes()
-            .Where(t => t.IsAssignableTo(typeof(IMigration)))
-            .Where(t => !t.IsAbstract);
-
-        foreach (var migrationType in migrationTypes)
-            services.AddTransient(typeof(IMigration), migrationType);
-
-        return services;
+            .Scan(s => s.FromAssemblyOf<IMigration>()
+                .AddClasses(c => c.AssignableTo<IMigration>())
+                .AsImplementedInterfaces(i => i == typeof(IMigration))
+                .WithTransientLifetime());
     }
 }

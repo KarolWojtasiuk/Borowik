@@ -1,7 +1,10 @@
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using Scrutor;
 
 namespace Borowik.Commands;
 
+[ServiceDescriptor<ICommander>(ServiceLifetime.Singleton)]
 internal class MediatorCommander : ICommander
 {
     private readonly IMediator _mediator;

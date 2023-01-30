@@ -1,0 +1,3 @@
+[submodule "Scrutor"]
+	path = Scrutor
+	url = https://github.com/khellang/Scrutor.git

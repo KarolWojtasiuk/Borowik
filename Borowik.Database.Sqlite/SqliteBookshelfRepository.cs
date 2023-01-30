@@ -5,9 +5,12 @@ using System.Text.Json;
 using Borowik.Books.Entities;
 using Dapper;
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.DependencyInjection;
+using Scrutor;
 
 namespace Borowik.Database.Sqlite;
 
+[ServiceDescriptor<IBookshelfRepository>(ServiceLifetime.Singleton)]
 internal class SqliteBookshelfRepository : IBookshelfRepository
 {
     private readonly ISqliteConnectionProvider _connectionProvider;

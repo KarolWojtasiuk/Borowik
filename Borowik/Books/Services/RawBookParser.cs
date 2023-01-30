@@ -1,7 +1,10 @@
 using Borowik.Books.Entities;
+using Microsoft.Extensions.DependencyInjection;
+using Scrutor;
 
 namespace Borowik.Books.Services;
 
+[ServiceDescriptor<IRawBookParser>(ServiceLifetime.Transient)]
 internal class RawBookParser : IRawBookParser
 {
     private readonly IEnumerable<IRawBookTypeParser> _rawBookTypeParsers;

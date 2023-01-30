@@ -2,8 +2,12 @@ using System.Data;
 using System.Data.Common;
 using Borowik.Database.Sqlite.Migrations;
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.DependencyInjection;
+using Scrutor;
 
 namespace Borowik.Database.Sqlite;
+
+[ServiceDescriptor<ISqliteConnectionProvider>(ServiceLifetime.Singleton)]
 
 internal class SqliteConnectionProvider : ISqliteConnectionProvider
 {

@@ -1,10 +1,7 @@
 using System.Runtime.CompilerServices;
-using Borowik.Books.Services;
-using Borowik.Commands;
-using Borowik.Queries;
-using Borowik.Services;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using MediatR;
+using Scrutor;
 
 [assembly: InternalsVisibleTo("Borowik.Database.Sqlite")]
 
@@ -16,11 +13,9 @@ public static class DependencyInjectionExtensions
     {
         return services
             .AddMediatR(typeof(DependencyInjectionExtensions).Assembly)
-            .AddSingleton<IQuerier, MediatorQuerier>()
-            .AddSingleton<ICommander, MediatorCommander>()
-            .AddSingleton<IGuidProvider, GuidProvider>()
-            .AddSingleton<IDateTimeProvider, DateTimeProvider>()
-            .AddTransient<IRawBookParser, RawBookParser>()
-            .AddTransient<IRawBookTypeParser, PlainTextRawBookTypeParser>();
+            .Scan(s =>
+                s.FromAssemblies(typeof(DependencyInjectionExtensions).Assembly)
+                    .AddClasses(c => c.WithAttribute<ServiceDescriptorAttribute>())
+                    .UsingAttributes());
     }
 }

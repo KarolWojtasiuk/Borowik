@@ -63,8 +63,13 @@ internal class BookshelvesView : Stack
         }
 
         var newBookshelfView = _newBookshelfViewProvider.Create();
-        stack.AddTitled(newBookshelfView, "new", "<New Bookshelf>");
         newBookshelfView.Created += (_, _) => _ = LoadBookshelvesAsync();
+
+        var clamp = Adw.Clamp.New();
+        clamp.MaximumSize = 300;
+        clamp.SetChild(newBookshelfView);
+
+        stack.AddTitled(clamp, "new", "<New Bookshelf>");
 
         var stackSidebar = StackSidebar.New();
         stackSidebar.Stack = stack;

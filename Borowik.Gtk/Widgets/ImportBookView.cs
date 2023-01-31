@@ -1,7 +1,4 @@
-using System.Text;
-using Borowik.Books.Commands;
 using Borowik.Books.Entities;
-using Borowik.Commands;
 using Borowik.Gtk.Widgets.Providers;
 using Gtk;
 
@@ -28,7 +25,6 @@ internal class ImportBookView : Box
         Spacing = 5;
 
         var button = Button.NewWithLabel("Import");
-        button.Vexpand = true;
         button.OnClicked += OpenImportBookWindow;
         Append(button);
     }

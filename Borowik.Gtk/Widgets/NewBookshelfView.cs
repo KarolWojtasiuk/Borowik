@@ -13,7 +13,6 @@ internal class NewBookshelfView : Box
     private readonly ICommander _commander;
     private readonly Adw.EntryRow _nameEntry = Adw.EntryRow.New();
     private readonly Adw.EntryRow _descriptionEntry = Adw.EntryRow.New();
-    private readonly ColorButton _colorChooser = ColorButton.New();
 
     public NewBookshelfView(ICommander commander)
     {
@@ -37,11 +36,6 @@ internal class NewBookshelfView : Box
         _descriptionEntry.Title = "Description";
         preferences.Add(_descriptionEntry);
 
-        var colorRow = Adw.ActionRow.New();
-        colorRow.AddSuffix(_colorChooser);
-        colorRow.Title = "Color";
-        preferences.Add(colorRow);
-        
         var button = Button.NewWithLabel("Create");
         button.OnClicked += Test;
 
@@ -60,9 +54,8 @@ internal class NewBookshelfView : Box
         }
 
         var description = _descriptionEntry.GetText();
-        var color = Color.Red;
 
-        var bookshelf = await _commander.SendCommandAsync(new CreateBookshelfCommand(name, description, color));
+        var bookshelf = await _commander.SendCommandAsync(new CreateBookshelfCommand(name, description));
         Created?.Invoke(this, bookshelf);
     }
 }

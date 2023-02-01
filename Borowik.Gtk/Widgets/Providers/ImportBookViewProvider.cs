@@ -11,16 +11,14 @@ internal interface IImportBookViewProvider
 internal class ImportBookViewProvider : IImportBookViewProvider
 {
     private readonly ICommander _commander;
-    private readonly IImportBookWindowProvider _importBookWindowProvider;
 
-    public ImportBookViewProvider(ICommander commander, IImportBookWindowProvider importBookWindowProvider)
+    public ImportBookViewProvider(ICommander commander)
     {
         _commander = commander ?? throw new ArgumentNullException(nameof(commander));
-        _importBookWindowProvider = importBookWindowProvider ?? throw new ArgumentNullException(nameof(importBookWindowProvider));
     }
 
     public ImportBookView CreateFor(Bookshelf bookshelf)
     {
-        return new ImportBookView(bookshelf, _importBookWindowProvider);
+        return new ImportBookView(bookshelf, _commander);
     }
 }

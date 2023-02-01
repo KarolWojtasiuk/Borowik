@@ -1,6 +1,5 @@
 using System.Data;
 using System.Data.Common;
-using System.Drawing;
 using System.Text.Json;
 using Borowik.Books.Entities;
 using Dapper;
@@ -24,13 +23,12 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
         var bookshelves = new List<Bookshelf>();
 
         await using var bookshelfReader =
-            await connection.ExecuteReaderAsync("SELECT ID, NAME, DESCRIPTION, COLOR, CREATED_AT FROM BOOKSHELVES");
+            await connection.ExecuteReaderAsync("SELECT ID, NAME, DESCRIPTION, CREATED_AT FROM BOOKSHELVES");
         while (await bookshelfReader.ReadAsync(cancellationToken))
         {
             var id = Guid.Parse((string)bookshelfReader.GetValue("ID"));
             var name = (string)bookshelfReader.GetValue("NAME");
             var description = (string?)bookshelfReader.GetNullableValue("DESCRIPTION");
-            var color = (int)(long)bookshelfReader.GetValue("COLOR");
             var createdAt = (long)bookshelfReader.GetValue("CREATED_AT");
 
             bookshelves.Add(new Bookshelf(
@@ -38,7 +36,6 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
                 name,
                 description,
                 await GetBooksFromBookshelf(connection, id, cancellationToken),
-                Color.FromArgb(color),
                 DateTime.SpecifyKind(new DateTime(createdAt), DateTimeKind.Utc)
             ));
         }
@@ -53,8 +50,8 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
         await connection.ExecuteAsync("""
-            INSERT INTO BOOKS (ID, BOOKSHELF_ID, NAME, CONTENT, AUTHOR, COVER, CREATED_AT, LAST_OPENED_AT)
-                VALUES (@Id, @BookshelfId, @Name, @Content, @Author, @Cover, @CreatedAt, @LastOpenedAt);
+            INSERT INTO BOOKS (ID, BOOKSHELF_ID, NAME, CONTENT, AUTHOR, CREATED_AT, LAST_OPENED_AT)
+                VALUES (@Id, @BookshelfId, @Name, @Content, @Author, @CreatedAt, @LastOpenedAt);
         """, new
         {
             Id = book.Id.ToString(),
@@ -62,7 +59,6 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
             Name = book.Metadata.Name,
             Content = JsonSerializer.Serialize(content.RootNode),
             Author = book.Metadata.Author,
-            Cover = book.Metadata.Cover is null ? null : Convert.ToBase64String(book.Metadata.Cover),
             CreatedAt = book.CreatedAt.Ticks,
             LastOpenedAt = book.LastOpenedAt?.Ticks
         });
@@ -96,14 +92,13 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
         await connection.ExecuteAsync("""
-            INSERT INTO BOOKSHELVES (ID, NAME, DESCRIPTION, COLOR, CREATED_AT)
-                VALUES (@Id, @Name, @Description, @Color, @CreatedAt);
+            INSERT INTO BOOKSHELVES (ID, NAME, DESCRIPTION, CREATED_AT)
+                VALUES (@Id, @Name, @Description, @CreatedAt);
         """, new
         {
             Id = bookshelf.Id.ToString(),
             Name = bookshelf.Name,
             Description = bookshelf.Description,
-            Color = bookshelf.Color.ToArgb(),
             CreatedAt = bookshelf.CreatedAt.Ticks
         });
 
@@ -114,7 +109,7 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
         CancellationToken cancellationToken)
     {
         await using var bookReader = await connection.ExecuteReaderAsync("""
-                SELECT ID, NAME, AUTHOR, COVER, CREATED_AT, LAST_OPENED_AT FROM BOOKS
+                SELECT ID, NAME, AUTHOR, CREATED_AT, LAST_OPENED_AT FROM BOOKS
                 WHERE BOOKSHELF_ID = @Id;
             """, new { Id = id.ToString() });
 
@@ -131,13 +126,12 @@ internal class SqliteBookshelfRepository : IBookshelfRepository
         var id = Guid.Parse((string)bookReader.GetValue("ID"));
         var name = (string)bookReader.GetValue("NAME");
         var author = (string?)bookReader.GetNullableValue("AUTHOR");
-        var cover = (string?)bookReader.GetNullableValue("COVER");
         var createdAt = (long)bookReader.GetValue("CREATED_AT");
         var lastOpenedAt = (long?)bookReader.GetNullableValue("LAST_OPENED_AT");
 
         return new Book(
             id,
-            new BookMetadata(name, author, cover is null ? null : Convert.FromBase64String(cover)),
+            new BookMetadata(name, author),
             DateTime.SpecifyKind(new DateTime(createdAt), DateTimeKind.Utc),
             lastOpenedAt is null ? null : DateTime.SpecifyKind(new DateTime(lastOpenedAt.Value), DateTimeKind.Utc)
         );

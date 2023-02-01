@@ -10,7 +10,7 @@ internal class PlainTextRawBookTypeParser : IRawBookTypeParser
     public Task<(IBookContentNode, BookMetadata)> ParseAsync(byte[] content, CancellationToken cancellationToken)
     {
         var node = new BookContentNodes.PlainTextNode(Encoding.UTF8.GetString(content));
-        var metadata = new BookMetadata("Plain Text", null, null);
+        var metadata = new BookMetadata("Plain Text", null);
         return Task.FromResult<(IBookContentNode, BookMetadata)>((node, metadata));
     }
 }

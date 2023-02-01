@@ -69,7 +69,7 @@ internal class BookshelvesView : Stack
         clamp.MaximumSize = 300;
         clamp.SetChild(newBookshelfView);
 
-        stack.AddTitled(clamp, "new", "<New Bookshelf>");
+        stack.AddTitled(clamp, "new", "New Bookshelf");
 
         var stackSidebar = StackSidebar.New();
         stackSidebar.Stack = stack;

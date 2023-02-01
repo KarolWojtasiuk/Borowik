@@ -1,46 +1,35 @@
 using Borowik.Books.Entities;
-using Borowik.Gtk.Widgets.Providers;
+using Borowik.Commands;
 using Gtk;
 
 namespace Borowik.Gtk.Widgets;
 
-internal class ImportBookView : Box
+internal class ImportBookView : Button
 {
     public event EventHandler<Book>? Created;
 
     private readonly Bookshelf _bookshelf;
-    private readonly IImportBookWindowProvider _importBookWindowProvider;
+    private readonly ICommander _commander;
 
-    public ImportBookView(Bookshelf bookshelf, IImportBookWindowProvider importBookWindowProvider)
+    public ImportBookView(Bookshelf bookshelf, ICommander commander)
     {
         _bookshelf = bookshelf ?? throw new ArgumentNullException(nameof(bookshelf));
-        _importBookWindowProvider = importBookWindowProvider ?? throw new ArgumentNullException(nameof(importBookWindowProvider));
+        _commander = commander ?? throw new ArgumentNullException(nameof(commander));
 
         BuildWidget();
     }
 
     private void BuildWidget()
     {
-        Orientation = Orientation.Vertical;
-        Spacing = 5;
+        Halign = Align.Fill;
+        Valign = Align.Start;
 
-        var button = Button.NewWithLabel("Import");
-        button.OnClicked += OpenImportBookWindow;
-        Append(button);
+        SetIconName("list-add-symbolic");
+        OnClicked += OpenImportBookWindowAsync;
     }
 
-    private async void OpenImportBookWindow(Button sender, EventArgs args)
+    private async void OpenImportBookWindowAsync(Button sender, EventArgs args)
     {
-        var window = _importBookWindowProvider.CreateFor(_bookshelf);
-
-        var taskSource = new TaskCompletionSource<Book?>();
-        window.OnCloseRequest += (_, _) => taskSource.TrySetResult(null);
-        window.BookImported += (_, book) => taskSource.TrySetResult(book);
-        window.Show();
-
-        var book = await taskSource.Task;
-
-        if (book is not null)
-            Created?.Invoke(this, book);
+        // file dialog
     }
 }

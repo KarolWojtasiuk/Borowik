@@ -2,7 +2,9 @@ using Borowik.Books.Commands;
 using Borowik.Books.Entities;
 using Borowik.Commands;
 using Borowik.Gtk.Widgets.Providers;
+using GdkPixbuf;
 using Gtk;
+using GtkLabel = Gtk.Label;
 
 namespace Borowik.Gtk.Widgets;
 
@@ -24,17 +26,37 @@ internal class BookView : Box
 
     private void BuildWidget()
     {
-        Orientation = Orientation.Vertical;
-        Spacing = 5;
+        Halign = Align.Center;
+        Valign = Align.Start;
+        AddCssClass("card");
 
-        Append(Label.New($"NAME: {_book.Metadata.Name}"));
-        Append(Label.New($"AUTHOR: {_book.Metadata.Author}"));
-        Append(Label.New($"CREATED_AT: {_book.CreatedAt}"));
-        Append(Label.New($"LAST_OPENED_AT: {_book.LastOpenedAt}"));
+        var box = Box.New(Orientation.Vertical, 5);
+        box.MarginTop = 10;
+        box.MarginBottom = 5;
+        box.MarginStart = 10;
+        box.MarginEnd = 10;
+        Append(box);
+
+        var name = GtkLabel.New(_book.Metadata.Name);
+        name.AddCssClass("title-2");
+        box.Append(name);
+
+        var author = GtkLabel.New(_book.Metadata.Author ?? "Unknown Author");
+        box.Append(author);
+
+        SetTooltipMarkup($"""
+            <b>Last opened at</b>: {_book.LastOpenedAt?.ToString("D") ?? "Never"}
+            <b>Created at</b>: {_book.CreatedAt:D}
+        """);
+        HasTooltip = true;
 
         var button = Button.NewWithLabel("Open");
+        button.MarginTop = 5;
+        button.MarginBottom = 5;
+        button.MarginStart = 5;
+        button.MarginEnd = 5;
         button.OnClicked += (_, _) => _ = OpenBookAsync();
-        Append(button);
+        box.Append(button);
     }
 
     private async Task OpenBookAsync()

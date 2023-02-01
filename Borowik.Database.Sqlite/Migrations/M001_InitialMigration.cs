@@ -15,7 +15,6 @@ internal class M001_InitialMigration : IMigration
                 ID TEXT PRIMARY KEY,
                 NAME TEXT NOT NULL,
                 DESCRIPTION TEXT NULL,
-                COLOR INT NOT NULL,
                 CREATED_AT INT NOT NULL);
 
             CREATE TABLE BOOKS(
@@ -24,7 +23,6 @@ internal class M001_InitialMigration : IMigration
                 NAME TEXT NOT NULL,
                 CONTENT TEXT NOT NULL,
                 AUTHOR TEXT NULL,
-                COVER TEXT NULL,
                 CREATED_AT INT NOT NULL,
                 LAST_OPENED_AT INT NULL);
             """);

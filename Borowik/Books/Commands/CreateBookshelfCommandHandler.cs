@@ -1,4 +1,3 @@
-using System.Drawing;
 using Borowik.Books.Entities;
 using Borowik.Commands;
 using Borowik.Services;
@@ -28,7 +27,6 @@ internal class CreateBookshelfCommandHandler : CommandHandler<CreateBookshelfCom
             command.Name,
             command.Description,
             Array.Empty<Book>(),
-            Color.FromArgb(command.Color.ToArgb()), // Without this C# interprets color as KnownColor
             _dateTimeProvider.GetUtcNew());
 
         await _bookshelfRepository.CreateBookshelfAsync(bookshelf, cancellationToken);

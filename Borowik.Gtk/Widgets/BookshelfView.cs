@@ -26,13 +26,13 @@ internal class BookshelfView : Box
         Orientation = Orientation.Vertical;
         Spacing = 5;
 
-        Append(Label.New($"ID: {_bookshelf.Id}"));
-        Append(Label.New($"NAME: {_bookshelf.Name}"));
-        Append(Label.New($"COLOR: {_bookshelf.Color}"));
-        Append(Label.New($"DESCRIPTION: {_bookshelf.Description}"));
-        Append(Label.New($"CREATED_AT: {_bookshelf.CreatedAt}"));
-        Append(Separator.New(Orientation.Horizontal));
-        Append(Label.New($"BOOKS: {_bookshelf.Books.Length}"));
+        var title = Label.New(_bookshelf.Name);
+        title.AddCssClass("title-1");
+        Append(title);
+
+        var description = Label.New(_bookshelf.Description);
+        description.AddCssClass("title-3");
+        Append(description);
 
         var booksView = _booksViewProvider.CreateFor(_bookshelf);
         booksView.Updated += (_, _) => Updated?.Invoke(this, EventArgs.Empty);

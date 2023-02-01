@@ -1,10 +1,7 @@
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using Scrutor;
 
 namespace Borowik.Queries;
 
-[ServiceDescriptor<IQuerier>(ServiceLifetime.Singleton)]
 internal class MediatorQuerier : IQuerier
 {
     private readonly IMediator _mediator;

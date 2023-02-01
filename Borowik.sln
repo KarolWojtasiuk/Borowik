@@ -15,10 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Borowik.Database.Sqlite", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Borowik.Gtk", "Borowik.Gtk\Borowik.Gtk.csproj", "{01BAF80E-4A24-41F3-B885-07A7178DCF68}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_ExternalReferences", "_ExternalReferences", "{70F772B6-6466-488F-A606-FC4C844A543F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scrutor", "Scrutor\src\Scrutor\Scrutor.csproj", "{0B6DF7A3-826A-4351-B9BE-9618AEA88B68}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,12 +36,7 @@ Global
 		{01BAF80E-4A24-41F3-B885-07A7178DCF68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01BAF80E-4A24-41F3-B885-07A7178DCF68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01BAF80E-4A24-41F3-B885-07A7178DCF68}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0B6DF7A3-826A-4351-B9BE-9618AEA88B68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B6DF7A3-826A-4351-B9BE-9618AEA88B68}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B6DF7A3-826A-4351-B9BE-9618AEA88B68}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B6DF7A3-826A-4351-B9BE-9618AEA88B68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{0B6DF7A3-826A-4351-B9BE-9618AEA88B68} = {70F772B6-6466-488F-A606-FC4C844A543F}
 	EndGlobalSection
 EndGlobal

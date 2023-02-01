@@ -1,11 +1,8 @@
 using System.Text;
 using Borowik.Books.Entities;
-using Microsoft.Extensions.DependencyInjection;
-using Scrutor;
 
 namespace Borowik.Books.Services;
 
-[ServiceDescriptor<IRawBookTypeParser>(ServiceLifetime.Transient)]
 internal class PlainTextRawBookTypeParser : IRawBookTypeParser
 {
     public RawBookType SupportedType => RawBookType.PlainText;

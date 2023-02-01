@@ -11,8 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Borowik.Database.Sqlite\Borowik.Database.Sqlite.csproj" />
       <ProjectReference Include="..\Borowik\Borowik.csproj" />
+      <ProjectReference Include="..\Borowik.Database.Sqlite\Borowik.Database.Sqlite.csproj" />
     </ItemGroup>
 
 </Project>

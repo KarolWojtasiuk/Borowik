@@ -2,8 +2,7 @@ using LiteDB;
 
 namespace Borowik.Database.LiteDb;
 
-public interface ILiteDbProvider
+internal interface ILiteDbProvider
 {
     public Task<LiteDatabase> GetLiteDatabase(CancellationToken cancellationToken);
-
 }

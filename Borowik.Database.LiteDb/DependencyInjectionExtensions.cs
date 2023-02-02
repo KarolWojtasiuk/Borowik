@@ -1,18 +1,16 @@
-using System.Runtime.CompilerServices;
+using Borowik.Books;
 using Microsoft.Extensions.DependencyInjection;
-
-[assembly: InternalsVisibleTo("Borowik.Database.LiteDb")]
 
 namespace Borowik.Database.LiteDb;
 
 public static class DependencyInjectionExtensions
 {
-    public static IServiceCollection AddBorowikLiteDb<TLiteDbProvider>(this IServiceCollection services, ServiceLifetime liteDbProviderLifetime = ServiceLifetime.Singleton)
-        where TLiteDbProvider : ILiteDbProvider
+    public static IServiceCollection AddBorowikLiteDb<TCustomLiteDbProvider>(this IServiceCollection services)
+        where TCustomLiteDbProvider : class, ICustomLiteDbProvider
     {
-        LiteDbMapper.RegisterMappings();
-
-        services.Add(new ServiceDescriptor(typeof(ILiteDbProvider), typeof(TLiteDbProvider), liteDbProviderLifetime));
-        return services;
+        return services.AddSingleton<LiteDbMapper>()
+            .AddSingleton<ILiteDbProvider, LiteDbProvider>()
+            .AddSingleton<ICustomLiteDbProvider, TCustomLiteDbProvider>()
+            .AddTransient<IBookshelfRepository, LiteDbBookshelfRepository>();
     }
 }

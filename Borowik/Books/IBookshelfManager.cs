@@ -9,7 +9,6 @@ public interface IBookshelfManager
         string name,
         string? description,
         Color color,
-        Book[] books,
         CancellationToken cancellationToken);
 
     public Task<Book> ImportBookAsync(

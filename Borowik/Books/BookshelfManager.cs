@@ -28,7 +28,6 @@ internal class BookshelfManager : IBookshelfManager
         string name,
         string? description,
         Color color,
-        Book[] books,
         CancellationToken cancellationToken)
     {
         var bookshelf = new Bookshelf(
@@ -36,7 +35,7 @@ internal class BookshelfManager : IBookshelfManager
             name,
             description,
             color,
-            books,
+            Array.Empty<Book>(),
             _dateTimeProvider.GetUtcNew());
 
         await _bookshelfRepository.CreateBookshelfAsync(bookshelf, cancellationToken);

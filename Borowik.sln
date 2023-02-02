@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_Solution
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Borowik.Tests", "Borowik.Tests\Borowik.Tests.csproj", "{FFE95B37-F098-4C08-9A92-899E4FB83DE4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Borowik.Database.LiteDb", "Borowik.Database.LiteDb\Borowik.Database.LiteDb.csproj", "{805B914D-2714-4D80-AD58-26557F79ED47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{FFE95B37-F098-4C08-9A92-899E4FB83DE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFE95B37-F098-4C08-9A92-899E4FB83DE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFE95B37-F098-4C08-9A92-899E4FB83DE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{805B914D-2714-4D80-AD58-26557F79ED47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{805B914D-2714-4D80-AD58-26557F79ED47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{805B914D-2714-4D80-AD58-26557F79ED47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{805B914D-2714-4D80-AD58-26557F79ED47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

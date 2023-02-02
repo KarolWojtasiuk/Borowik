@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: InternalsVisibleTo("Borowik.Database.Sqlite")]
+[assembly: InternalsVisibleTo("Borowik.Database.LiteDb")]
 
 namespace Borowik;
 

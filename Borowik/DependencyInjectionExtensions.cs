@@ -1,10 +1,5 @@
 using System.Runtime.CompilerServices;
-using Borowik.Books.Services;
-using Borowik.Commands;
-using Borowik.Queries;
-using Borowik.Services;
 using Microsoft.Extensions.DependencyInjection;
-using MediatR;
 
 [assembly: InternalsVisibleTo("Borowik.Database.Sqlite")]
 
@@ -14,13 +9,18 @@ public static class DependencyInjectionExtensions
 {
     public static IServiceCollection AddBorowik(this IServiceCollection services)
     {
+        const string singletonSuffix = "Provider";
+        var assembly = typeof(DependencyInjectionExtensions).Assembly;
+
         return services
-            .AddMediatR(typeof(DependencyInjectionExtensions).Assembly)
-            .AddSingleton<ICommander, MediatorCommander>()
-            .AddSingleton<IQuerier, MediatorQuerier>()
-            .AddSingleton<IDateTimeProvider, DateTimeProvider>()
-            .AddSingleton<IGuidProvider, GuidProvider>()
-            .AddTransient<IRawBookParser, RawBookParser>()
-            .AddTransient<IRawBookTypeParser, PlainTextRawBookTypeParser>();
+            .Scan(s => s.FromAssemblies(assembly)
+                .AddClasses(c => c.Where(t => t.Name.EndsWith(singletonSuffix)))
+                .AsImplementedInterfaces(i => i.Assembly == assembly)
+                .WithSingletonLifetime())
+
+            .Scan(s => s.FromAssemblies(assembly)
+                .AddClasses(c => c.Where(t => !t.Name.EndsWith(singletonSuffix)))
+                .AsImplementedInterfaces(i => i.Assembly == assembly)
+                .WithTransientLifetime());
     }
 }

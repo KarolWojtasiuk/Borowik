@@ -1,5 +1,5 @@
-using Borowik.Entities;
+using System.Drawing;
 
 namespace Borowik.Books.Entities;
 
-public record Bookshelf(Guid Id, string Name, string? Description, Book[] Books, DateTime CreatedAt) : IEntity<Guid>;
+public record Bookshelf(Guid Id, string Name, string? Description, Color Color, Book[] Books, DateTime CreatedAt);

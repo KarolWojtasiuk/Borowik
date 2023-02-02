@@ -26,13 +26,4 @@ jobs:
       run: dotnet build --no-restore
     
     - name: Test
-      run: dotnet test --no-build --verbosity normal
-
-    - name: Publish Gtk
-      run: dotnet publish *.Gtk --configuration Release --output bin-gtk
-      
-    - name: Upload Gtk build artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{ runner.os }}
-        path: bin-gtk
+      run: dotnet test --no-build

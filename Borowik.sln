@@ -11,10 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_Solution
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Borowik.Database.Sqlite", "Borowik.Database.Sqlite\Borowik.Database.Sqlite.csproj", "{C832F89D-E5F5-4FFC-B98D-95FDDD4F2007}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Borowik.Gtk", "Borowik.Gtk\Borowik.Gtk.csproj", "{01BAF80E-4A24-41F3-B885-07A7178DCF68}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,14 +24,6 @@ Global
 		{72A1967E-3D63-43EE-8DEB-44954EE1FA3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72A1967E-3D63-43EE-8DEB-44954EE1FA3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72A1967E-3D63-43EE-8DEB-44954EE1FA3D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C832F89D-E5F5-4FFC-B98D-95FDDD4F2007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C832F89D-E5F5-4FFC-B98D-95FDDD4F2007}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C832F89D-E5F5-4FFC-B98D-95FDDD4F2007}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C832F89D-E5F5-4FFC-B98D-95FDDD4F2007}.Release|Any CPU.Build.0 = Release|Any CPU
-		{01BAF80E-4A24-41F3-B885-07A7178DCF68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01BAF80E-4A24-41F3-B885-07A7178DCF68}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01BAF80E-4A24-41F3-B885-07A7178DCF68}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01BAF80E-4A24-41F3-B885-07A7178DCF68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

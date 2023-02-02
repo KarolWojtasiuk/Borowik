@@ -50,11 +50,11 @@ internal class BookshelfManager : IBookshelfManager
         byte[] data,
         CancellationToken cancellationToken)
     {
-        var (node, metadata) = await _rawBookParser.ParseAsync(type, data, cancellationToken);
+        var (pages, metadata) = await _rawBookParser.ParseAsync(type, data, cancellationToken);
 
         var id = _guidProvider.Generate();
         var book = new Book(id, metadata, _dateTimeProvider.GetUtcNew(), null);
-        var content = new BookContent(id, node);
+        var content = new BookContent(id, pages);
 
         await _bookshelfRepository.CreateBookAsync(book, content, cancellationToken);
 

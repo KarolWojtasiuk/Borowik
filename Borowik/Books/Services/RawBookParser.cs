@@ -11,7 +11,7 @@ internal class RawBookParser : IRawBookParser
         _rawBookTypeParsers = rawBookTypeParsers ?? throw new ArgumentNullException(nameof(rawBookTypeParsers));
     }
 
-    public async Task<(IBookContentNode, BookMetadata)> ParseAsync(RawBookType type, byte[] content, CancellationToken cancellationToken)
+    public async Task<(BookContentPage[], BookMetadata)> ParseAsync(RawBookType type, byte[] content, CancellationToken cancellationToken)
     {
         var parser = _rawBookTypeParsers.SingleOrDefault(p => p.SupportedType == type)
                      ?? throw new InvalidOperationException("Raw book type '{type}' is not supported");

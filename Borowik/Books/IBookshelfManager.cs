@@ -5,6 +5,10 @@ namespace Borowik.Books;
 
 public interface IBookshelfManager
 {
+    public Task<Bookshelf> GetBookshelfAsync(
+        Guid bookshelfId,
+        CancellationToken cancellationToken);
+
     public Task<Bookshelf> CreateBookshelfAsync(
         string name,
         string? description,

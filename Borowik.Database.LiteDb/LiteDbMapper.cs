@@ -42,19 +42,20 @@ internal sealed class LiteDbMapper : BsonMapper
     {
         Entity<Bookshelf>()
             .Id(e => e.Id)
-            .DbRef(e => e.Books)
+            .Ignore(e => e.Books)
             .Ctor(d => new Bookshelf(
                 Deserialize<Guid>(d["_id"]),
                 Deserialize<string>(d[nameof(Bookshelf.Name)]),
                 Deserialize<string?>(d[nameof(Bookshelf.Description)]),
                 Deserialize<Color>(d[nameof(Bookshelf.Color)]),
-                Deserialize<Book[]>(d[nameof(Bookshelf.Books)]),
+                Array.Empty<Book>(),
                 Deserialize<DateTime>(d[nameof(Bookshelf.CreatedAt)])));
 
         Entity<Book>()
             .Id(e => e.Id)
             .Ctor(d => new Book(
                 Deserialize<Guid>(d["_id"]),
+                Deserialize<Guid>(d[nameof(Book.BookshelfId)]),
                 Deserialize<BookMetadata>(d[nameof(Book.Metadata)]),
                 Deserialize<DateTime>(d[nameof(Book.CreatedAt)]),
                 Deserialize<DateTime?>(d[nameof(Book.LastOpenedAt)])));

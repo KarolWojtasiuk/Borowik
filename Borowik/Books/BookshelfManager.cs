@@ -24,6 +24,11 @@ internal class BookshelfManager : IBookshelfManager
         _rawBookParser = rawBookParser;
     }
 
+    public async Task<Bookshelf> GetBookshelfAsync(Guid bookshelfId, CancellationToken cancellationToken)
+    {
+        return await _bookshelfRepository.GetBookshelfAsync(bookshelfId, cancellationToken);
+    }
+
     public async Task<Bookshelf> CreateBookshelfAsync(
         string name,
         string? description,
@@ -52,7 +57,7 @@ internal class BookshelfManager : IBookshelfManager
         var (pages, metadata) = await _rawBookParser.ParseAsync(type, data, cancellationToken);
 
         var id = _guidProvider.Generate();
-        var book = new Book(id, metadata, _dateTimeProvider.GetUtcNew(), null);
+        var book = new Book(id, bookshelfId, metadata, _dateTimeProvider.GetUtcNew(), null);
         var content = new BookContent(id, pages);
 
         await _bookshelfRepository.CreateBookAsync(book, content, cancellationToken);

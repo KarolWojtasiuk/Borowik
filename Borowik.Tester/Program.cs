@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Text;
 using Borowik;
 using Borowik.Books;
 using Borowik.Books.Entities;
@@ -13,12 +14,13 @@ var serviceProvider = new ServiceCollection()
 
 var manager = serviceProvider.GetRequiredService<IBookshelfManager>();
 var bookshelf = await manager.CreateBookshelfAsync("test name", "siema", Color.Red, CancellationToken.None);
-await manager.CreateBookshelfAsync("test name empty", "", Color.Black, CancellationToken.None);
-await manager.CreateBookshelfAsync("test name null", null, default, CancellationToken.None);
 
-var book = await manager.ImportBookAsync(bookshelf.Id, RawBookType.PlainText, Array.Empty<byte>(), CancellationToken.None);
-var (content, lastOpenedAt) = await manager.OpenBookAsync(book.Id, CancellationToken.None);
+var book1 = await manager.ImportBookAsync(bookshelf.Id, RawBookType.PlainText, "Hakuna Matata"u8.ToArray(), CancellationToken.None);
+var book2 = await manager.ImportBookAsync(bookshelf.Id, RawBookType.PlainText, "test"u8.ToArray(), CancellationToken.None);
+var (content, lastOpenedAt) = await manager.OpenBookAsync(book1.Id, CancellationToken.None);
 
+
+var remoteBookshelf = await manager.GetBookshelfAsync(bookshelf.Id, CancellationToken.None);
 Console.WriteLine();
 
 

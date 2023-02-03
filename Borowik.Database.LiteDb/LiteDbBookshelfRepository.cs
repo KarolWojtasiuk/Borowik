@@ -1,5 +1,6 @@
 ﻿using Borowik.Books;
 using Borowik.Books.Entities;
+using LiteDB;
 
 namespace Borowik.Database.LiteDb;
 
@@ -28,7 +29,7 @@ internal class LiteDbBookshelfRepository : IBookshelfRepository
     public async Task UpdateBookLastOpenedAtAsync(Guid bookId, DateTime lastOpenedAt, CancellationToken cancellationToken)
     {
         var db = await _liteDbProvider.GetLiteDatabase(cancellationToken);
-        var book = db.GetCollection<Book>().FindById(bookId);
+        var book = db.GetCollection<Book>("Book").FindById(bookId);
         db.GetCollection<Book>().Update(book with { LastOpenedAt = lastOpenedAt });
     }
 

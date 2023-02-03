@@ -11,6 +11,7 @@ public static class DependencyInjectionExtensions
         return services.AddSingleton<LiteDbMapper>()
             .AddSingleton<ILiteDbProvider, LiteDbProvider>()
             .AddSingleton<ICustomLiteDbProvider, TCustomLiteDbProvider>()
+            .AddTransient<IBookContentPageSerializer, BookContentPageSerializer>()
             .AddTransient<IBookshelfRepository, LiteDbBookshelfRepository>();
     }
 }

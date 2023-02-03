@@ -2,5 +2,11 @@
 
 public class MainViewModel : ViewModelBase
 {
-    public string Greeting => "Welcome to Avalonia!";
+    public MainViewModel(TestViewModel testViewModel)
+    {
+        TestViewModel = testViewModel;
+    }
+
+    public string Greeting => "main";
+    public object TestViewModel { get; }
 }

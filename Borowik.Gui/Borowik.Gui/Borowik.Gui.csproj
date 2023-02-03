@@ -1,21 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-
     <ItemGroup>
-        <AvaloniaResource Include="Assets\**"/>
-        <TrimmerRootDescriptor Include="Roots.xml"/>
+        <AvaloniaResource Include="Assets\**" />
+        <TrimmerRootDescriptor Include="Roots.xml" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)"/>
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)"/>
-        <PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        
+        <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)"/>
-        <PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1"/>
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
+        <PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Borowik\Borowik.csproj" />
+      <ProjectReference Include="..\..\Borowik.Database.LiteDb\Borowik.Database.LiteDb.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Views\TestView.axaml.cs">
+        <DependentUpon>TestView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

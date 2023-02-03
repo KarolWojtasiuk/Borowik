@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Borowik.Books.Entities;
 
-namespace Borowik.Database.LiteDb;
+namespace Borowik.Database.LiteDb.Mappings;
 
 internal class PolymorphicTypeResolver : DefaultJsonTypeInfoResolver
 {

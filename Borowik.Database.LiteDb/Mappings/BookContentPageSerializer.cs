@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Borowik.Books.Entities;
 
-namespace Borowik.Database.LiteDb;
+namespace Borowik.Database.LiteDb.Mappings;
 
 internal class BookContentPageSerializer : IBookContentPageSerializer
 {

@@ -2,7 +2,7 @@ using System.Drawing;
 using Borowik.Books.Entities;
 using LiteDB;
 
-namespace Borowik.Database.LiteDb;
+namespace Borowik.Database.LiteDb.Mappings;
 
 internal sealed class LiteDbMapper : BsonMapper
 {

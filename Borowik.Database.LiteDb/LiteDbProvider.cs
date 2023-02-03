@@ -1,3 +1,4 @@
+using Borowik.Database.LiteDb.Mappings;
 using LiteDB;
 
 namespace Borowik.Database.LiteDb;
@@ -5,18 +6,21 @@ namespace Borowik.Database.LiteDb;
 internal class LiteDbProvider : ILiteDbProvider
 {
     private readonly ICustomLiteDbProvider _customLiteDbProvider;
-    private readonly LiteDbMapper _mapper;
+    private readonly ILiteDbMapperProvider _mapperProvider;
+    private LiteDbMapper? _mapper;
 
     public LiteDbProvider(
         ICustomLiteDbProvider customLiteDbProvider,
-        LiteDbMapper mapper)
+        ILiteDbMapperProvider mapperProvider)
     {
         _customLiteDbProvider = customLiteDbProvider;
-        _mapper = mapper;
+        _mapperProvider = mapperProvider;
     }
 
     public async Task<LiteDatabase> GetLiteDatabase(CancellationToken cancellationToken)
     {
+        _mapper ??= _mapperProvider.Get();
+
         var db = await _customLiteDbProvider.GetLiteDatabase(_mapper, cancellationToken);
 
         if (db.Mapper != _mapper)

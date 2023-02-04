@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)"/>
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)"/>
+        <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)"  />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Borowik.Gui\Borowik.Gui.csproj"/>
+        <ProjectReference Include="..\Borowik.Gui\Borowik.Gui.csproj" />
     </ItemGroup>
 
 </Project>

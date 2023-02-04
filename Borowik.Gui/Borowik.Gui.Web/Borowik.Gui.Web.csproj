@@ -6,14 +6,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <WasmExtraFilesToDeploy Include="AppBundle\**"/>
+        <WasmExtraFilesToDeploy Include="AppBundle\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Web" Version="$(AvaloniaVersion)"/>
+        <PackageReference Include="Avalonia.Web" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Borowik.Gui\Borowik.Gui.csproj"/>
+        <ProjectReference Include="..\Borowik.Gui\Borowik.Gui.csproj" />
     </ItemGroup>
 </Project>

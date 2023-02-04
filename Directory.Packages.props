@@ -18,7 +18,7 @@
         <PackageVersion Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
         <PackageVersion Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
         <PackageVersion Include="XamlNameReferenceGenerator" Version="1.5.1" />
-        <PackageVersion Include="Avalonia.Destkop" Version="$(AvaloniaVersion)" />
+        <PackageVersion Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
         <PackageVersion Include="Avalonia.Web" Version="$(AvaloniaVersion)" />
 
         <!-- Tests -->

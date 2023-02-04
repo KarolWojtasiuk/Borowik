@@ -18,6 +18,9 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
+        
+    - name: Install WASM workload
+      run: dotnet install workload wasm-tools
     
     - name: Restore dependencies
       run: dotnet restore

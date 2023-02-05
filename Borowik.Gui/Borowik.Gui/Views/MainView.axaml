@@ -12,6 +12,6 @@
         <viewModels:MainViewModel />
     </Design.DataContext>
 
-    <views:TestView DataContext="{Binding TestViewModel}"></views:TestView>
+    <Button Command="{ Binding OpenDatabaseCommand }">Open database</Button>
 
 </UserControl>

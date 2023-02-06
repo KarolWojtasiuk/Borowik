@@ -4,11 +4,8 @@ namespace Borowik.Books;
 
 internal interface IBookshelfRepository
 {
-    Task<Bookshelf?> GetBookshelfAsync(Guid bookshelfId, CancellationToken cancellationToken);
-    Task CreateBookshelfAsync(Bookshelf bookshelf, CancellationToken cancellationToken);
-
-    Task CreateBookAsync(Book book, BookContent content, CancellationToken cancellationToken);
-    Task UpdateBookLastOpenedAtAsync(Guid bookId, DateTime lastOpenedAt, CancellationToken cancellationToken);
-
-    Task<BookContent?> GetBookContentAsync(Guid bookId, CancellationToken cancellationToken);
+    Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken);
+    Task<Bookshelf> GetAsync(Guid id, CancellationToken cancellationToken);
+    Task<Bookshelf[]> GetAllAsync(CancellationToken cancellationToken);
+    Task CreateAsync(Bookshelf bookshelf, CancellationToken cancellationToken);
 }

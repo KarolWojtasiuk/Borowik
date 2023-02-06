@@ -1,3 +1,6 @@
 namespace Borowik.Books.Entities;
 
-public record BookContentPage(IBookContentNode[] Nodes);
+public record BookContentPage
+(
+    IBookContentNode[] Nodes
+);

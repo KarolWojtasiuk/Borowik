@@ -19,7 +19,6 @@ public record BookshelfEntity
             Name,
             Description,
             System.Drawing.Color.FromArgb(Color),
-            Array.Empty<Book>(),
             CreatedAt);
     }
 

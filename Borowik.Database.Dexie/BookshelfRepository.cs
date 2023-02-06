@@ -14,46 +14,31 @@ internal class BookshelfRepository : IBookshelfRepository
         _dbProvider = dbProvider;
     }
 
-    public async Task<Bookshelf?> GetBookshelfAsync(Guid bookshelfId, CancellationToken cancellationToken)
+    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
     {
         var db = await _dbProvider.GetAsync();
-        var entity = await db.BookshelfEntities().Get(bookshelfId);
-        return entity?.Map();
+        return await db.BookshelfEntities().Get(id) is not null;
     }
 
-    public async Task CreateBookshelfAsync(Bookshelf bookshelf, CancellationToken cancellationToken)
+    public async Task<Bookshelf> GetAsync(Guid id, CancellationToken cancellationToken)
     {
         var db = await _dbProvider.GetAsync();
+        var entity = await db.BookshelfEntities().Get(id)
+                     ?? throw new BorowikDomainException($"Bookshelf with Id '{id}' does not exist in database");
 
-        await db.Transaction(async transaction =>
-        {
-            await transaction.BookshelfEntities().Add(BookshelfEntity.Map(bookshelf));
-            await transaction.BookEntities().BulkAdd(bookshelf.Books.Select(BookEntity.Map));
-        });
+        return entity.Map();
     }
 
-    public async Task CreateBookAsync(Book book, BookContent content, CancellationToken cancellationToken)
+    public async Task<Bookshelf[]> GetAllAsync(CancellationToken cancellationToken)
     {
         var db = await _dbProvider.GetAsync();
-
-        await db.Transaction(async transaction =>
-        {
-            await transaction.BookEntities().Add(BookEntity.Map(book));
-            await transaction.BookContentEntities().Add(BookContentEntity.Map(content));
-        });
+        var bookshelves = await db.BookshelfEntities().ToArray();
+        return bookshelves.Select(b => b.Map()).ToArray();
     }
 
-    public async Task UpdateBookLastOpenedAtAsync(Guid bookId, DateTime lastOpenedAt,
-        CancellationToken cancellationToken)
+    public async Task CreateAsync(Bookshelf bookshelf, CancellationToken cancellationToken)
     {
         var db = await _dbProvider.GetAsync();
-        await db.BookEntities().Update(bookId, b => b.LastOpenedAt, lastOpenedAt);
-    }
-
-    public async Task<BookContent?> GetBookContentAsync(Guid bookId, CancellationToken cancellationToken)
-    {
-        var db = await _dbProvider.GetAsync();
-        var entity = await db.BookContentEntities().Get(bookId);
-        return entity?.Map();
+        await db.BookshelfEntities().Add(BookshelfEntity.Map(bookshelf));
     }
 }

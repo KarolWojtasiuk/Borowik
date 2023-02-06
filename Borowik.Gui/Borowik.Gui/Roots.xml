@@ -1,4 +1,0 @@
-﻿<linker>
-    <assembly fullname="Borowik.Gui" preserve="All" />
-    <assembly fullname="Avalonia.Themes.Fluent" preserve="All" />
-</linker>

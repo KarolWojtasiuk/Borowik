@@ -1,19 +1,18 @@
+using System.Runtime.Versioning;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Borowik.Database.LiteDb;
+namespace Borowik.Database.IndexedDb;
 
+[SupportedOSPlatform("browser")]
 public static class DependencyInjectionExtensions
 {
-    public static IServiceCollection AddBorowikLiteDb<TCustomLiteDbProvider>(this IServiceCollection services)
-        where TCustomLiteDbProvider : class, ICustomLiteDbProvider
+    public static IServiceCollection AddBorowikLiteDb(this IServiceCollection services)
     {
         const string singletonSuffix = "Provider";
         var assembly = typeof(DependencyInjectionExtensions).Assembly;
         var coreAssembly = typeof(Borowik.DependencyInjectionExtensions).Assembly;
 
         return services
-            .AddSingleton<ICustomLiteDbProvider, TCustomLiteDbProvider>()
-
             .Scan(s => s.FromAssemblies(assembly)
                 .AddClasses(c => c.Where(t => t.Name.EndsWith(singletonSuffix)))
                 .AsImplementedInterfaces(i => i.Assembly == assembly || i.Assembly == coreAssembly)

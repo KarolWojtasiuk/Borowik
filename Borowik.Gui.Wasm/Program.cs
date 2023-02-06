@@ -1,3 +1,6 @@
+using Blazorise;
+using Blazorise.Bulma;
+using Blazorise.Icons.FontAwesome;
 using Borowik;
 using Borowik.Database.Dexie;
 using Microsoft.AspNetCore.Components.Web;
@@ -11,6 +14,12 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services
     .AddBorowik()
     .AddBorowikDexie()
-    .AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+    .AddBlazorise(o => { o.Immediate = true; })
+    .AddBulmaProviders()
+    .AddFontAwesomeIcons()
+    .AddScoped(_ => new HttpClient
+    {
+        BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+    });
 
 await builder.Build().RunAsync();

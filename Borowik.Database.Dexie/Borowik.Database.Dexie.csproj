@@ -3,5 +3,9 @@
     <ItemGroup>
         <ProjectReference Include="..\Borowik\Borowik.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="DexieNET" />
+    </ItemGroup>
     
 </Project>

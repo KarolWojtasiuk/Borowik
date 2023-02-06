@@ -24,7 +24,7 @@ internal class BookshelfManager : IBookshelfManager
         _rawBookParser = rawBookParser;
     }
 
-    public async Task<Bookshelf> GetBookshelfAsync(Guid bookshelfId, CancellationToken cancellationToken)
+    public async Task<Bookshelf?> GetBookshelfAsync(Guid bookshelfId, CancellationToken cancellationToken)
     {
         return await _bookshelfRepository.GetBookshelfAsync(bookshelfId, cancellationToken);
     }
@@ -71,8 +71,9 @@ internal class BookshelfManager : IBookshelfManager
     {
         var lastOpenedAt = _dateTimeProvider.GetUtcNew();
 
+        var content = await _bookshelfRepository.GetBookContentAsync(bookId, cancellationToken)
+                      ?? throw new InvalidOperationException($"Book with Id={bookId} does not exist");
         await _bookshelfRepository.UpdateBookLastOpenedAtAsync(bookId, lastOpenedAt, cancellationToken);
-        var content = await _bookshelfRepository.GetBookContentAsync(bookId, cancellationToken);
 
         return (content, lastOpenedAt);
     }

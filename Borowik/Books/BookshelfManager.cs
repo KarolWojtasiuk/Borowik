@@ -38,7 +38,7 @@ internal class BookshelfManager : IBookshelfManager
         return new BookshelfWithBooks(bookshelf, books);
     }
 
-    public async Task<Bookshelf[]> GetBookshelvesAsync(Guid bookshelfId, CancellationToken cancellationToken)
+    public async Task<Bookshelf[]> GetBookshelvesAsync(CancellationToken cancellationToken)
     {
         return await _bookshelfRepository.GetAllAsync(cancellationToken);
     }

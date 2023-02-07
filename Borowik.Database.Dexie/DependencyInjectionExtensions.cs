@@ -3,7 +3,6 @@ using Borowik.Database.Dexie.Entities;
 using DexieNET;
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: SupportedOSPlatform("browser")]
 namespace Borowik.Database.Dexie;
 
 public static class DependencyInjectionExtensions

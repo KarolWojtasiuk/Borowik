@@ -1,14 +1,16 @@
 ﻿@inherits LayoutComponentBase
 
-<Layout>
-
-    <LayoutHeader Fixed>
-        <HeaderBar/>
-    </LayoutHeader>
-    <LayoutContent Padding="Padding.Is4.OnX">
-        @* @Body *@
-    </LayoutContent>
-    <LayoutFooter Fixed>
-        <FooterMenu></FooterMenu>
-    </LayoutFooter>
+<Layout Sider>
+    <LayoutSider>
+        <LayoutSiderContent>
+            <NavigationBar />
+        </LayoutSiderContent>
+    </LayoutSider>
+    <Layout>
+        <LayoutHeader Fixed>
+        </LayoutHeader>
+        <LayoutContent Padding="Padding.Is3">
+            @Body
+        </LayoutContent>
+    </Layout>
 </Layout>

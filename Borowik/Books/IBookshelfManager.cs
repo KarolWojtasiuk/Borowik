@@ -10,7 +10,6 @@ public interface IBookshelfManager
         CancellationToken cancellationToken);
 
     public Task<Bookshelf[]> GetBookshelvesAsync(
-        Guid bookshelfId,
         CancellationToken cancellationToken);
 
     public Task<Bookshelf> CreateBookshelfAsync(

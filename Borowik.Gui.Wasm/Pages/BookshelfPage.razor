@@ -1,0 +1,36 @@
+@page "/Bookshelf/{bookshelfId:guid}"
+@using Borowik.Books
+@using Borowik.Books.Entities
+
+<Heading Size="HeadingSize.Is1">Bookshelf</Heading>
+@if (_bookshelf is not null)
+{
+    <Heading Size="HeadingSize.Is2">@_bookshelf?.Color</Heading>
+}
+
+@code
+{
+    [Parameter]
+    public Guid BookshelfId { get; init; }
+
+    [Inject]
+    private IBookshelfManager BookshelfManager { get; init; } = null!;
+
+    [Inject]
+    private INotificationService NotificationService { get; init; } = null!;
+
+    private BookshelfWithBooks? _bookshelf;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _bookshelf = await BookshelfManager.GetBookshelfAsync(BookshelfId, CancellationToken.None);
+        }
+        catch (Exception e)
+        {
+            await NotificationService.Error(e.Message, "Error");
+            throw;
+        }
+    }
+}

@@ -1,5 +1,5 @@
 using Blazorise;
-using Blazorise.Bulma;
+using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Borowik;
 using Borowik.Database.Dexie;
@@ -15,7 +15,7 @@ builder.Services
     .AddBorowik()
     .AddBorowikDexie()
     .AddBlazorise(o => { o.Immediate = true; })
-    .AddBulmaProviders()
+    .AddBootstrap5Providers()
     .AddFontAwesomeIcons()
     .AddScoped(_ => new HttpClient
     {

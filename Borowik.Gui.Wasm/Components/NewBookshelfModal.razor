@@ -1,0 +1,30 @@
+<Modal @ref="_modal">
+    <ModalContent>
+        <ModalHeader>
+            <ModalTitle Size="HeadingSize.Is4">Test</ModalTitle>
+            <CloseButton/>
+        </ModalHeader>
+        <ModalBody>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam, iure!
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="CloseAsync">Close</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+
+@code {
+    private Modal _modal = null!;
+
+    public async Task ShowAsync()
+    {
+        await _modal.Show();
+    }
+
+    private async Task CloseAsync()
+    {
+        await _modal.Close(CloseReason.UserClosing);
+    }
+
+}

@@ -1,30 +1,91 @@
-<Modal @ref="_modal">
-    <ModalContent>
-        <ModalHeader>
-            <ModalTitle Size="HeadingSize.Is4">Test</ModalTitle>
-            <CloseButton/>
-        </ModalHeader>
-        <ModalBody>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam, iure!
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Secondary" Clicked="CloseAsync">Close</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
+@using Blazorise.FluentValidation
+@using Borowik.Books
+@using System.Drawing
+@using Color = Blazorise.Color
+@using Size = Blazorise.Size
+<Form>
+    <Modal @ref="_modal">
+        <ModalContent>
+            <ModalHeader>
+                <ModalTitle Size="HeadingSize.Is4">New Bookshelf</ModalTitle>
+                <CloseButton/>
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="_validations" Mode="ValidationMode.Manual" Model="@_model" HandlerType="typeof(FluentValidationHandler)">
+                    <Validation>
+                        <Field>
+                            <FieldLabel>Name</FieldLabel>
+                            <FieldBody>
+                                <TextEdit Placeholder="Name" @bind-Text="@_model.Name">
+                                    <Feedback>
+                                        <ValidationError/>
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel>Description</FieldLabel>
+                            <FieldBody>
+                                <TextEdit Placeholder="Description" @bind-Text="@_model.Description">
+                                    <Feedback>
+                                        <ValidationError/>
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel>Color</FieldLabel>
+                            <FieldBody>
+                                <ColorEdit Size="Size.Medium" @bind-Color="@_model.Color">
+                                    <Feedback>
+                                        <ValidationError/>
+                                    </Feedback>
+                                </ColorEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Type="ButtonType.Submit" PreventDefaultOnSubmit Clicked="CreateAsync">Create</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+</Form>
 
 
 @code {
+
+    [Inject]
+    private IExceptionHandler ExceptionHandler { get; init; } = null!;
+
+    [Inject]
+    private IBookshelfManager BookshelfManager { get; init; } = null!;
+
     private Modal _modal = null!;
+    private Validations _validations = null!;
+    private BookshelfModel _model = new();
 
     public async Task ShowAsync()
     {
         await _modal.Show();
     }
 
-    private async Task CloseAsync()
+    private async Task CreateAsync()
     {
-        await _modal.Close(CloseReason.UserClosing);
+        Console.WriteLine(_model.Color);
+        if (await _validations.ValidateAll())
+        {
+            var bookshelf = await ExceptionHandler.HandleAsync(async () =>
+                await BookshelfManager.CreateBookshelfAsync(_model.Name, _model.Description, ColorTranslator.FromHtml(_model.Color), CancellationToken.None));
+
+            //TODO: refresh bookshelves
+            await _modal.Close(CloseReason.UserClosing);
+        }
     }
 
 }

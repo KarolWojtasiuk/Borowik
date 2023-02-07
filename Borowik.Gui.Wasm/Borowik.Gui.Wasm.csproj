@@ -6,6 +6,9 @@
         <PackageReference Include="Blazorise.Bootstrap5" />
         <PackageReference Include="Blazorise.Components" />
         <PackageReference Include="Blazorise.Icons.FontAwesome" />
+        <PackageReference Include="Blazorise.FluentValidation" />
+        <PackageReference Include="FluentValidation" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     </ItemGroup>
 
     <ItemGroup>

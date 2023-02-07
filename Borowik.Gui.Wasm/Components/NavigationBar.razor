@@ -27,7 +27,7 @@
                             var link = $"/Bookshelf/{bookshelf.Id}";
                             var color = $"color: #{bookshelf.Color.R:X2}{bookshelf.Color.G:X2}{bookshelf.Color.B:X2}";
 
-                            <Tooltip Text="@bookshelf.Description" Placement="TooltipPlacement.Right">
+                            <Tooltip Text="@bookshelf.Description" Placement="TooltipPlacement.Bottom">
                                 <BarDropdownItem To="@link">
                                     <BarIcon Style="@color" IconName="IconName.Folder"/>
                                     @bookshelf.Name
@@ -58,6 +58,9 @@
 @code
 {
     [Inject]
+    private IExceptionHandler ExceptionHandler { get; init; } = null!;
+
+    [Inject]
     private IBookshelfManager BookshelfManager { get; init; } = null!;
 
     private NewBookshelfModal _newBookshelfModal = null!;
@@ -65,7 +68,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _bookshelves = await BookshelfManager.GetBookshelvesAsync(CancellationToken.None);
+        _bookshelves = await ExceptionHandler.HandleAsync(async () =>
+            await BookshelfManager.GetBookshelvesAsync(CancellationToken.None));
     }
 
     private async Task CreateBookshelfAsync()

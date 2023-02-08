@@ -9,5 +9,7 @@
         <PackageReference Include="Scrutor" />
         <PackageReference Include="MediatR" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" />
+        <PackageReference Include="FluentValidation" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     </ItemGroup>
 </Project>

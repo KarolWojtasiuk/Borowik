@@ -1,9 +1,11 @@
 using System.Text;
 using Borowik.Books.Entities;
 using Borowik.Services;
+using Scrutor;
 
 namespace Borowik.Books.Services;
 
+[ServiceDescriptor(typeof(IRawBookTypeParser))]
 internal class PlainTextRawBookTypeParser : IRawBookTypeParser
 {
     private readonly IGuidProvider _guidProvider;

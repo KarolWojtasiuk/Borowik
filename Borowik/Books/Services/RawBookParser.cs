@@ -1,7 +1,9 @@
 using Borowik.Books.Entities;
+using Scrutor;
 
 namespace Borowik.Books.Services;
 
+[ServiceDescriptor(typeof(IRawBookParser))]
 internal class RawBookParser : IRawBookParser
 {
     private readonly IEnumerable<IRawBookTypeParser> _rawBookTypeParsers;

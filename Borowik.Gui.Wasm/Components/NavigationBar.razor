@@ -1,5 +1,6 @@
 @using Blazorise.Icons.FontAwesome
 @using Borowik.Books
+@using Borowik.Books.Contracts
 @using Borowik.Books.Entities
 
 <Bar Mode="BarMode.VerticalInline" CollapseMode="BarCollapseMode.Small" ThemeContrast="ThemeContrast.Dark" Breakpoint="Breakpoint.FullHD">
@@ -53,7 +54,7 @@
     </BarMenu>
 </Bar>
 
-<NewBookshelfModal @ref="_newBookshelfModal"/>
+<NewBookshelfModal @ref="_newBookshelfModal" BookshelfCreated="LoadBookshelvesAsync" />
 
 @code
 {
@@ -61,15 +62,21 @@
     private IExceptionHandler ExceptionHandler { get; init; } = null!;
 
     [Inject]
-    private IBookshelfManager BookshelfManager { get; init; } = null!;
+    private IBorowikManager BorowikManager { get; init; } = null!;
 
     private NewBookshelfModal _newBookshelfModal = null!;
     private Bookshelf[] _bookshelves = Array.Empty<Bookshelf>();
 
     protected override async Task OnInitializedAsync()
     {
-        _bookshelves = await ExceptionHandler.HandleAsync(async () =>
-            await BookshelfManager.GetBookshelvesAsync(CancellationToken.None));
+        await LoadBookshelvesAsync();
+    }
+
+    private async Task LoadBookshelvesAsync()
+    {
+        var response = await ExceptionHandler.HandleAsync(() =>
+            BorowikManager.SendRequestAsync(new GetBookshelvesRequest()));
+        _bookshelves = response.Bookshelves;
     }
 
     private async Task CreateBookshelfAsync()

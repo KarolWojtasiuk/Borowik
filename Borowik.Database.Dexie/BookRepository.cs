@@ -2,9 +2,11 @@ using Borowik.Books;
 using Borowik.Books.Entities;
 using Borowik.Database.Dexie.Entities;
 using DexieNET;
+using Scrutor;
 
 namespace Borowik.Database.Dexie;
 
+[ServiceDescriptor(typeof(IBookRepository))]
 internal class BookRepository : IBookRepository
 {
     private readonly IDbProvider _dbProvider;
@@ -24,7 +26,7 @@ internal class BookRepository : IBookRepository
     {
         var db = await _dbProvider.GetAsync();
         var entity = await db.BookEntities().Get(id)
-                     ?? throw new BorowikDomainException($"Book with Id '{id}' does not exist in database");
+                     ?? throw new BorowikException($"Book with Id '{id}' does not exist in database");
 
         return entity.Map();
     }
@@ -40,7 +42,7 @@ internal class BookRepository : IBookRepository
     {
         var db = await _dbProvider.GetAsync();
         var entity = await db.BookContentEntities().Get(id)
-                     ?? throw new BorowikDomainException($"Book with Id '{id}' does not exist in database");
+                     ?? throw new BorowikException($"Book with Id '{id}' does not exist in database");
 
         return entity.Map();
     }

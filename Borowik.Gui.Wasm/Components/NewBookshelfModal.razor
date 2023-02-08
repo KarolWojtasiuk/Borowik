@@ -1,6 +1,7 @@
 @using Blazorise.FluentValidation
 @using Borowik.Books
 @using System.Drawing
+@using Borowik.Books.Contracts
 @using Color = Blazorise.Color
 @using Size = Blazorise.Size
 <Form>
@@ -60,11 +61,13 @@
 
 @code {
 
+    [Parameter] public EventCallback BookshelfCreated { get; init; }
+
     [Inject]
     private IExceptionHandler ExceptionHandler { get; init; } = null!;
 
     [Inject]
-    private IBookshelfManager BookshelfManager { get; init; } = null!;
+    private IBorowikManager BorowikManager { get; init; } = null!;
 
     private Modal _modal = null!;
     private Validations _validations = null!;
@@ -77,13 +80,14 @@
 
     private async Task CreateAsync()
     {
-        Console.WriteLine(_model.Color);
         if (await _validations.ValidateAll())
         {
-            var bookshelf = await ExceptionHandler.HandleAsync(async () =>
-                await BookshelfManager.CreateBookshelfAsync(_model.Name, _model.Description, ColorTranslator.FromHtml(_model.Color), CancellationToken.None));
+            await ExceptionHandler.HandleAsync(() =>
+                BorowikManager.SendRequestAsync(
+                    new CreateBookshelfRequest(_model.Name, _model.Description, ColorTranslator.FromHtml(_model.Color)),
+                    CancellationToken.None));
 
-            //TODO: refresh bookshelves
+            await BookshelfCreated.InvokeAsync();
             await _modal.Close(CloseReason.UserClosing);
         }
     }

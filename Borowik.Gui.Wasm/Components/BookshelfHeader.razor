@@ -1,0 +1,32 @@
+@using Borowik.Books.Entities
+
+<Div Flex="Flex.JustifyContent.Between.AlignItems.Center" Padding="Padding.Is3" Background="Background.Dark" TextColor="TextColor.Light">
+    <Div>
+        <Heading Size="HeadingSize.Is1">
+            @(Bookshelf?.Name ?? nameof(Bookshelf))
+        </Heading>
+
+        <Text>
+            @(Bookshelf?.Description)
+        </Text>
+    </Div>
+
+    <Button Clicked="OpenBookshelfEditModal">
+        <Icon Name="IconName.Edit" TextColor="TextColor.Light" IconSize="IconSize.x2"></Icon>
+    </Button>
+</Div>
+
+<BookshelfEditModal @ref="_bookshelfEditModal" Bookshelf="Bookshelf"/>
+
+@code
+{
+    [Parameter]
+    public Bookshelf? Bookshelf { get; init; }
+
+    private BookshelfEditModal _bookshelfEditModal = null!;
+
+    private async Task OpenBookshelfEditModal()
+    {
+        await _bookshelfEditModal.ShowAsync();
+    }
+}

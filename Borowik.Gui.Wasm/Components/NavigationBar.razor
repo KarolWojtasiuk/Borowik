@@ -15,32 +15,25 @@
     </BarBrand>
     <BarMenu>
         <BarStart>
+            @foreach (var bookshelf in _bookshelves)
+            {
+                var link = $"/Bookshelf/{bookshelf.Id}";
+                var color = $"color: {bookshelf.Color.ToHex()}";
+
+                <Tooltip Text="@bookshelf.Description" Placement="TooltipPlacement.Bottom">
+                    <BarItem>
+                        <BarLink To="@link">
+                            <BarIcon Style="@color" IconName="IconName.Folder"/>
+                            @bookshelf.Name
+                        </BarLink>
+                    </BarItem>
+                </Tooltip>
+            }
             <BarItem>
-                <BarDropdown>
-                    <BarDropdownToggle>
-                        <BarIcon IconName="IconName.FolderOpen"></BarIcon>
-                        Bookshelves
-                    </BarDropdownToggle>
-
-                    <BarDropdownMenu>
-                        @foreach (var bookshelf in _bookshelves)
-                        {
-                            var link = $"/Bookshelf/{bookshelf.Id}";
-                            var color = $"color: #{bookshelf.Color.R:X2}{bookshelf.Color.G:X2}{bookshelf.Color.B:X2}";
-
-                            <Tooltip Text="@bookshelf.Description" Placement="TooltipPlacement.Bottom">
-                                <BarDropdownItem To="@link">
-                                    <BarIcon Style="@color" IconName="IconName.Folder"/>
-                                    @bookshelf.Name
-                                </BarDropdownItem>
-                            </Tooltip>
-                        }
-                        <BarDropdownItem Clicked="CreateBookshelfAsync">
-                            <BarIcon IconName="IconName.FolderPlus"/>
-                            New Bookshelf
-                        </BarDropdownItem>
-                    </BarDropdownMenu>
-                </BarDropdown>
+                <BarLink Clicked="CreateBookshelfAsync">
+                    <BarIcon IconName="IconName.FolderPlus"/>
+                    New Bookshelf
+                </BarLink>
             </BarItem>
         </BarStart>
         <BarEnd>
@@ -54,7 +47,7 @@
     </BarMenu>
 </Bar>
 
-<NewBookshelfModal @ref="_newBookshelfModal" BookshelfCreated="LoadBookshelvesAsync" />
+<NewBookshelfModal @ref="_newBookshelfModal" BookshelfCreated="LoadBookshelvesAsync"/>
 
 @code
 {

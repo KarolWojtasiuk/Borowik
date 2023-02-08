@@ -2,11 +2,7 @@
 @using Borowik.Books.Contracts
 @using Borowik.Books.Entities
 
-<Heading Size="HeadingSize.Is1">Bookshelf</Heading>
-@if (_bookshelf is not null)
-{
-    <Heading Size="HeadingSize.Is2">@_bookshelf?.Color</Heading>
-}
+<BookshelfHeader Bookshelf="_bookshelf"/>
 
 @code
 {

@@ -1,0 +1,39 @@
+@using Color = Blazorise.Color
+@using Borowik.Books.Entities
+
+<Modal @ref="_modal">
+    <ModalContent>
+        <ModalHeader>
+            <ModalTitle Size="HeadingSize.Is4">Bookshelf</ModalTitle>
+            <CloseButton/>
+        </ModalHeader>
+        <ModalBody>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+            Adipisci aliquid amet cumque dolore excepturi incidunt.
+            Ipsum iusto molestias obcaecati omnis provident quam unde vitae voluptas.
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Type="ButtonType.Submit" PreventDefaultOnSubmit Clicked="SaveAsync">Save</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+
+@code {
+
+    [Parameter]
+    public Bookshelf? Bookshelf { get; init; }
+
+    private Modal _modal = null!;
+
+    public async Task ShowAsync()
+    {
+        await _modal.Show();
+    }
+
+    private async Task SaveAsync()
+    {
+        await _modal.Close(CloseReason.UserClosing);
+    }
+
+}

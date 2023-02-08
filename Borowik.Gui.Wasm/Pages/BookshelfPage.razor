@@ -4,6 +4,8 @@
 
 <BookshelfHeader Bookshelf="_bookshelf"/>
 
+<BooksView Books="_bookshelf?.Books ?? Array.Empty<Book>()" />
+
 @code
 {
     [Parameter]

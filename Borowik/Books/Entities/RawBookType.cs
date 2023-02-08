@@ -2,5 +2,6 @@ namespace Borowik.Books.Entities;
 
 public enum RawBookType
 {
-    PlainText
+    Debug = -1,
+    PlainText = 0
 }

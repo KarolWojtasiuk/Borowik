@@ -50,10 +50,10 @@ internal class BookRepository : IBookRepository
     public async Task CreateAsync(Book book, BookContent content, CancellationToken cancellationToken)
     {
         var db = await _dbProvider.GetAsync();
-        await db.Transaction(async transaction =>
+        await db.Transaction(async _ =>
         {
-            await transaction.BookEntities().Add(BookEntity.Map(book));
-            await transaction.BookContentEntities().Add(BookContentEntity.Map(content));
+            await db.BookEntities().Add(BookEntity.Map(book));
+            await db.BookContentEntities().Add(BookContentEntity.Map(content));
         });
     }
 

@@ -18,10 +18,8 @@ public static class DependencyInjectionExtensions
             .AddValidatorsFromAssembly(assembly, ServiceLifetime.Singleton)
             .AddMediatR(assembly)
             .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>))
-
             .Scan(s => s.FromAssemblies(assembly)
                 .AddClasses(c => c.WithAttribute<ServiceDescriptorAttribute>())
-                .AsImplementedInterfaces(i => i.Assembly == assembly)
                 .UsingAttributes());
     }
 }

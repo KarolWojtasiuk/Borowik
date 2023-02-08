@@ -1,15 +1,72 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
-        <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
+﻿<ThemeProvider Theme="Theme">
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</ThemeProvider>
 
-<ModalProvider />
-<NotificationProvider />
+<ModalProvider/>
+<NotificationProvider/>
+
+@code
+{
+    private static readonly Theme Theme = new Theme
+    {
+        // ColorOptions = new ThemeColorOptions
+        // {
+        //     Primary = "#000000",
+        //     Danger = "#000000",
+        //     Dark = "#000000",
+        //     Info = "#000000",
+        //     Light = "#000000",
+        //     Secondary = "#000000",
+        //     Success = "#000000",
+        //     Warning = "#000000",
+        //     Link = "#000000"
+        // },
+        // BackgroundOptions = new ThemeBackgroundOptions
+        // {
+        //     Primary = "#000000",
+        //     Body = "#000000",
+        //     Danger = "#000000",
+        //     Dark = "#000000",
+        //     Info = "#000000",
+        //     Light = "#000000",
+        //     Muted = "#000000",
+        //     Secondary = "#000000",
+        //     Success = "#000000",
+        //     Warning = "#000000"
+        // },
+        // TextColorOptions = new ThemeTextColorOptions
+        // {
+        //     Primary = "#000000",
+        //     Danger = "#000000",
+        //     Dark = "#000000",
+        //     Info = "#000000",
+        //     Light = "#000000",
+        //     Secondary = "#000000",
+        //     Success = "#000000",
+        //     Warning = "#000000",
+        //     Body = "#000000",
+        //     Muted = "#000000",
+        //     Black50 = "#000000",
+        //     White = "#000000",
+        //     White50 = "#000000"
+        // },
+        // White = "#000000",
+        // BodyOptions = new ThemeBodyOptions
+        // {
+        //
+        //     BackgroundColor = "#393E41",
+        //     TextColor = "#EEEEEE"
+        // }
+    };
+}

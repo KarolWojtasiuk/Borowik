@@ -1,0 +1,39 @@
+@using Borowik.Books.Entities
+
+<Div Flex="Flex.Wrap.JustifyContent.Center" Gap="Gap.Is3" Padding="Padding.Is2.OnX.Is5.OnY">
+    @foreach (var book in Books)
+    {
+        <Card Style="@CardSize">
+            <CardImage Source="@("https://unsplash.it/1024?a=" + book.Id)"/>
+            <Progress Border="Border.RoundedZero" Value="@(Random.Shared.Next(1, 90))" Size="Size.Small"></Progress>
+            <CardBody>
+                <CardTitle Size="3">@book.Metadata.Name</CardTitle>
+                <CardSubtitle>@book.Metadata.Author</CardSubtitle>
+            </CardBody>
+        </Card>
+    }
+
+    <Card Style="@CardSize">
+        <CardImage Source="https://via.placeholder.com/1024"/>
+        <CardBody>
+            <CardTitle Size="3">New book</CardTitle>
+            <CardSubtitle>Import new book</CardSubtitle>
+        </CardBody>
+    </Card>
+</Div>
+
+
+@code
+{
+    [Parameter]
+    public Book[] Books { get; init; } = Array.Empty<Book>();
+
+    private BookshelfEditModal _bookshelfEditModal = null!;
+
+        private const string CardSize = "width: 20%";
+
+    private async Task OpenBookshelfEditModal()
+    {
+        await _bookshelfEditModal.ShowAsync();
+    }
+}

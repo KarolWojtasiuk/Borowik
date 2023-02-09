@@ -2,6 +2,7 @@ using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.FluentValidation;
 using Blazorise.Icons.FontAwesome;
+using Blazorise.LoadingIndicator;
 using Borowik;
 using Borowik.Database.Dexie;
 using Microsoft.AspNetCore.Components.Web;
@@ -21,6 +22,7 @@ builder.Services
     .AddBlazorise(o => { o.Immediate = true; })
     .AddBootstrap5Providers()
     .AddFontAwesomeIcons()
+    .AddLoadingIndicator()
     .AddBlazoriseFluentValidation()
     .AddValidatorsFromAssemblyContaining<Program>()
     .AddScoped(_ => new HttpClient

@@ -17,6 +17,7 @@
         <PackageVersion Include="Blazorise.Bootstrap5" Version="1.2.0" />
         <PackageVersion Include="Blazorise.Components" Version="1.2.0" />
         <PackageVersion Include="Blazorise.FluentValidation" Version="1.2.0" />
+        <PackageVersion Include="Blazorise.LoadingIndicator" Version="1.2.0" />
         <PackageVersion Include="FluentValidation" Version="11.4.0" />
         <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0" />
         <!-- Tests -->

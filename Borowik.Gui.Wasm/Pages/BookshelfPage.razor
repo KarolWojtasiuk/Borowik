@@ -3,8 +3,7 @@
 @using Borowik.Books.Entities
 
 <BookshelfHeader Bookshelf="_bookshelf"/>
-
-<BooksView Bookshelf="_bookshelf" />
+<BooksView Bookshelf="_bookshelf"/>
 
 @code
 {
@@ -17,13 +16,20 @@
     [Inject]
     private IBorowikManager BorowikManager { get; init; } = null!;
 
+    [Inject]
+    private ILoadingIndicatorService LoadingIndicatorService { get; init; } = null!;
+
     private BookshelfWithBooks? _bookshelf;
 
     protected override async Task OnParametersSetAsync()
     {
+        await LoadingIndicatorService.Show();
+
         var response = await ExceptionHandler.HandleAsync(() =>
             BorowikManager.SendRequestAsync(new GetBookshelfRequest(BookshelfId), CancellationToken.None));
 
         _bookshelf = response.BookshelfWithBooks;
+
+        await LoadingIndicatorService.Hide();
     }
 }

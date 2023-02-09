@@ -4,7 +4,7 @@
 <Modal @ref="_modal">
     <ModalContent>
         <ModalHeader>
-            <ModalTitle Size="HeadingSize.Is4">Bookshelf</ModalTitle>
+            <ModalTitle Size="HeadingSize.Is4">Import</ModalTitle>
             <CloseButton/>
         </ModalHeader>
         <ModalBody>
@@ -13,7 +13,7 @@
             Ipsum iusto molestias obcaecati omnis provident quam unde vitae voluptas.
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Type="ButtonType.Submit" PreventDefaultOnSubmit Clicked="SaveAsync">Save</Button>
+            <Button Color="Color.Primary" Type="ButtonType.Submit" PreventDefaultOnSubmit Clicked="ImportAsync">Import</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
@@ -31,7 +31,7 @@
         await _modal.Show();
     }
 
-    private async Task SaveAsync()
+    private async Task ImportAsync()
     {
         await _modal.Close(CloseReason.UserClosing);
     }

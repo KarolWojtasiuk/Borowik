@@ -11,12 +11,12 @@
         </Text>
     </Div>
 
-    <Button Clicked="OpenBookshelfEditModal">
+    <Button Clicked="OpenEditBookshelfModalAsync">
         <Icon Name="IconName.Edit" TextColor="TextColor.Light" IconSize="IconSize.x2"></Icon>
     </Button>
 </Div>
 
-<BookshelfEditModal @ref="_bookshelfEditModal" Bookshelf="Bookshelf"/>
+<EditBookshelfModal @ref="_editBookshelfModal" Bookshelf="Bookshelf"/>
 
 @code
 {
@@ -24,10 +24,10 @@
     [EditorRequired]
     public Bookshelf? Bookshelf { get; init; }
 
-    private BookshelfEditModal _bookshelfEditModal = null!;
+    private EditBookshelfModal _editBookshelfModal = null!;
 
-    private async Task OpenBookshelfEditModal()
+    private async Task OpenEditBookshelfModalAsync()
     {
-        await _bookshelfEditModal.ShowAsync();
+        await _editBookshelfModal.ShowAsync();
     }
 }

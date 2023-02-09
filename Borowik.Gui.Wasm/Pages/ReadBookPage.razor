@@ -1,0 +1,9 @@
+@page "/Book/{bookId:guid}"
+
+<DisplayHeading>@BookId</DisplayHeading>
+
+@code
+{
+    [Parameter]
+    public Guid BookId { get; init; }
+}

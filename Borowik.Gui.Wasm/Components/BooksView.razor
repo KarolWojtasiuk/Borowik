@@ -4,7 +4,6 @@
 @if (Bookshelf is null)
 {
     <Progress Visible></Progress>
-    <DisplayHeading>chuj</DisplayHeading>
     return;
 }
 
@@ -22,32 +21,37 @@
     </Dropdown>
 </Div>
 
-<Div Flex="Flex.Wrap.JustifyContent.Center" Gap="Gap.Is3" Padding="Padding.Is3">
-    @foreach (var book in Bookshelf?.Books ?? Array.Empty<Book>())
+<Div Flex="Flex.Wrap.JustifyContent.Center" Padding="Padding.Is3">
+    @foreach (var book in OrderBooks())
     {
-        <Column ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnWidescreen.Is4.OnDesktop.Is12.OnTablet">
-            <Card Class="book-card">
-                <CardImage Source="@("https://unsplash.it/1024?a=" + book.Id)"/>
-                <Progress Border="Border.RoundedZero" Value="@(Random.Shared.Next(1, 90))" Size="Size.Small"></Progress>
-                <CardBody>
-                    <CardTitle Size="3">@book.Metadata.Name</CardTitle>
-                    <CardSubtitle>@book.Metadata.Author</CardSubtitle>
-                </CardBody>
-            </Card>
+        <Column ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnWidescreen.Is6.OnTablet.Is12.OnMobile">
+            <Button Type="ButtonType.Link" To="@($"/Book/{book.Id}")">
+                <Card Class="book-card">
+                    <CardImage Source="@($"https://picsum.photos/seed/{book.Id}/1024")"/>
+                    <Progress Border="Border.RoundedZero" Value="@(Random.Shared.Next(1, 90))" Size="Size.Small"></Progress>
+                    <CardBody>
+                        <CardTitle Size="3">@book.Metadata.Name</CardTitle>
+                        <CardSubtitle>@book.Metadata.Author</CardSubtitle>
+                    </CardBody>
+                </Card>
+            </Button>
         </Column>
     }
 
-    <Column ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnWidescreen.Is4.OnDesktop.Is12.OnTablet">
-        <Card>
-            <CardImage Source="https://via.placeholder.com/1024"/>
-            <CardBody>
-                <CardTitle Size="3">New book</CardTitle>
-                <CardSubtitle>Import new book</CardSubtitle>
-            </CardBody>
-        </Card>
+    <Column ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnWidescreen.Is6.OnTablet.Is12.OnMobile">
+        <Button Clicked="OpenImportBookModalAsync">
+            <Card>
+                <CardImage Source="https://picsum.photos/seed/null/1024"/>
+                <CardBody>
+                    <CardTitle Size="3">New book</CardTitle>
+                    <CardSubtitle>Import new book</CardSubtitle>
+                </CardBody>
+            </Card>
+        </Button>
     </Column>
 </Div>
 
+<ImportBookModal @ref="_importBookModal"/>
 
 @code
 {
@@ -61,11 +65,35 @@
     [Inject]
     private IBorowikManager BorowikManager { get; init; } = null!;
 
-    private BookshelfEditModal _bookshelfEditModal = null!;
+    [Inject]
+    private ILoadingIndicatorService LoadingIndicatorService { get; init; } = null!;
 
-    private async Task OpenBookshelfEditModal()
+    private ImportBookModal _importBookModal = null!;
+
+    private async Task OpenImportBookModalAsync()
     {
-        await _bookshelfEditModal.ShowAsync();
+        await _importBookModal.ShowAsync();
+    }
+
+    private IEnumerable<Book> OrderBooks()
+    {
+        if (Bookshelf is null || Bookshelf.Books.Length == 0)
+            return Enumerable.Empty<Book>();
+
+        var books = Bookshelf.Books;
+
+        return Bookshelf.SortMode switch
+        {
+            BooksSortMode.LastOpenedAscending => books.OrderBy(b => b.LastOpenedAt),
+            BooksSortMode.LastOpenedDescending => books.OrderByDescending(b => b.LastOpenedAt),
+            BooksSortMode.ImportedAtAscending => books.OrderBy(b => b.ImportedAt),
+            BooksSortMode.ImportedAtDescending => books.OrderByDescending(b => b.ImportedAt),
+            BooksSortMode.NameAscending => books.OrderBy(b => b.Metadata.Name),
+            BooksSortMode.NameDescending => books.OrderByDescending(b => b.Metadata.Name),
+            BooksSortMode.AuthorAscending => books.OrderBy(b => b.Metadata.Author),
+            BooksSortMode.AuthorDescending => books.OrderByDescending(b => b.Metadata.Author),
+            _ => throw new InvalidOperationException($"Not supported sort mode '{Bookshelf.SortMode}'")
+            };
     }
 
     private async Task SetSortModeAsync(BooksSortMode sortMode)
@@ -73,9 +101,13 @@
         if (Bookshelf is null)
             return;
 
+        await LoadingIndicatorService.Show();
+
         await ExceptionHandler.HandleAsync(() =>
             BorowikManager.SendRequestAsync(new SetBooksSortModeRequest(Bookshelf.Id, sortMode)));
 
         Bookshelf = Bookshelf with { SortMode = sortMode };
+
+        await LoadingIndicatorService.Hide();
     }
 }

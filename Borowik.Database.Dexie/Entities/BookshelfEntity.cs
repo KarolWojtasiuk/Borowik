@@ -7,8 +7,9 @@ public record BookshelfEntity
 (
     [property: Index(IsPrimary = true, IsUnique = true)] Guid Id,
     [property: Index] string Name,
-    [property: Index] string? Description,
+    [property: Index] string Description,
     [property: Index] int Color,
+    [property: Index] BooksSortMode SortMode,
     [property: Index] DateTime CreatedAt
 ) : IBorowikEntityStore, IEntity<BookshelfEntity, Bookshelf>
 {
@@ -19,6 +20,7 @@ public record BookshelfEntity
             Name,
             Description,
             System.Drawing.Color.FromArgb(Color),
+            SortMode,
             CreatedAt);
     }
 
@@ -29,6 +31,7 @@ public record BookshelfEntity
             baseEntity.Name,
             baseEntity.Description,
             baseEntity.Color.ToArgb(),
+            baseEntity.SortMode,
             baseEntity.CreatedAt);
     }
 }

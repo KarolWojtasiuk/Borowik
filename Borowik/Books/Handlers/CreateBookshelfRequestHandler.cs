@@ -28,6 +28,7 @@ internal class CreateBookshelfRequestHandler : IRequestHandler<CreateBookshelfRe
             request.Name,
             request.Description,
             request.Color,
+            BooksSortMode.ImportedAtDescending,
             _dateTimeProvider.GetUtcNew());
 
         await _bookshelfRepository.CreateAsync(bookshelf, cancellationToken);

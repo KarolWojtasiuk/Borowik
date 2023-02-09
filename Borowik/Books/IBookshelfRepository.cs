@@ -8,4 +8,6 @@ internal interface IBookshelfRepository
     Task<Bookshelf> GetAsync(Guid id, CancellationToken cancellationToken);
     Task<Bookshelf[]> GetAllAsync(CancellationToken cancellationToken);
     Task CreateAsync(Bookshelf bookshelf, CancellationToken cancellationToken);
+    Task UpdateAsync(Bookshelf bookshelf, CancellationToken cancellationToken);
+
 }

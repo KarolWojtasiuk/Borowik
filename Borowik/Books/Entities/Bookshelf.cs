@@ -6,7 +6,8 @@ public record Bookshelf
 (
     Guid Id,
     string Name,
-    string? Description,
+    string Description,
     Color Color,
+    BooksSortMode SortMode,
     DateTime CreatedAt
 );

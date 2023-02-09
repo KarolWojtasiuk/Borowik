@@ -9,7 +9,7 @@ public record BookEntity
     Guid Id,
     [property: Index] Guid BookshelfId,
     [property: Index] string Name,
-    [property: Index] string? Author,
+    [property: Index] string Author,
     [property: ByteIndex] byte[]? Cover,
     [property: Index] DateTime CreatedAt,
     [property: Index] DateTime? LastOpenedAt
@@ -33,7 +33,7 @@ public record BookEntity
             baseEntity.Metadata.Name,
             baseEntity.Metadata.Author,
             baseEntity.Metadata.Cover,
-            baseEntity.CreatedAt,
+            baseEntity.ImportedAt,
             baseEntity.LastOpenedAt);
     }
 }

@@ -22,7 +22,7 @@ internal class PlainTextRawBookTypeParser : IRawBookTypeParser
         var node = new BookContentNodes.PlainTextNode(_guidProvider.Generate(), Encoding.UTF8.GetString(content));
         var pages = new [] { new BookContentPage(new IBookContentNode[] { node }) };
 
-        var metadata = new BookMetadata("Plain Text", null, null);
+        var metadata = new BookMetadata("Plain Text", string.Empty, null);
 
         return Task.FromResult((pages, metadata));
     }

@@ -6,11 +6,12 @@ public record BookshelfWithBooks
 (
     Guid Id,
     string Name,
-    string? Description,
+    string Description,
     Color Color,
     Book[] Books,
+    BooksSortMode SortMode,
     DateTime CreatedAt
-) : Bookshelf(Id, Name, Description, Color, CreatedAt)
+) : Bookshelf(Id, Name, Description, Color, SortMode, CreatedAt)
 {
     public BookshelfWithBooks(Bookshelf bookshelf, Book[] books) : this(
         bookshelf.Id,
@@ -18,6 +19,7 @@ public record BookshelfWithBooks
         bookshelf.Description,
         bookshelf.Color,
         books,
+        bookshelf.SortMode,
         bookshelf.CreatedAt)
     {
     }

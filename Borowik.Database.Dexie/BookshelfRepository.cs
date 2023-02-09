@@ -43,4 +43,10 @@ internal class BookshelfRepository : IBookshelfRepository
         var db = await _dbProvider.GetAsync();
         await db.BookshelfEntities().Add(BookshelfEntity.Map(bookshelf));
     }
+
+    public async Task UpdateAsync(Bookshelf bookshelf, CancellationToken cancellationToken)
+    {
+        var db = await _dbProvider.GetAsync();
+        await db.BookshelfEntities().Put(BookshelfEntity.Map(bookshelf));
+    }
 }

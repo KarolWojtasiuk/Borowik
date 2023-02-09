@@ -1,39 +1,81 @@
 @using Borowik.Books.Entities
+@using Borowik.Books.Contracts
 
-<Div Flex="Flex.Wrap.JustifyContent.Center" Gap="Gap.Is3" Padding="Padding.Is2.OnX.Is5.OnY">
-    @foreach (var book in Books)
+@if (Bookshelf is null)
+{
+    <Progress Visible></Progress>
+    <DisplayHeading>chuj</DisplayHeading>
+    return;
+}
+
+<Div Flex="Flex.JustifyContent.End" Padding="Padding.Is3">
+    <Dropdown>
+        <DropdownToggle Color="Color.Primary">
+            @Bookshelf?.SortMode
+        </DropdownToggle>
+        <DropdownMenu>
+            @foreach (var sortMode in Enum.GetValues<BooksSortMode>())
+            {
+                <DropdownItem Clicked="() => SetSortModeAsync(sortMode)">@sortMode</DropdownItem>
+            }
+        </DropdownMenu>
+    </Dropdown>
+</Div>
+
+<Div Flex="Flex.Wrap.JustifyContent.Center" Gap="Gap.Is3" Padding="Padding.Is3">
+    @foreach (var book in Bookshelf?.Books ?? Array.Empty<Book>())
     {
-        <Card Style="@CardSize">
-            <CardImage Source="@("https://unsplash.it/1024?a=" + book.Id)"/>
-            <Progress Border="Border.RoundedZero" Value="@(Random.Shared.Next(1, 90))" Size="Size.Small"></Progress>
-            <CardBody>
-                <CardTitle Size="3">@book.Metadata.Name</CardTitle>
-                <CardSubtitle>@book.Metadata.Author</CardSubtitle>
-            </CardBody>
-        </Card>
+        <Column ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnWidescreen.Is4.OnDesktop.Is12.OnTablet">
+            <Card Class="book-card">
+                <CardImage Source="@("https://unsplash.it/1024?a=" + book.Id)"/>
+                <Progress Border="Border.RoundedZero" Value="@(Random.Shared.Next(1, 90))" Size="Size.Small"></Progress>
+                <CardBody>
+                    <CardTitle Size="3">@book.Metadata.Name</CardTitle>
+                    <CardSubtitle>@book.Metadata.Author</CardSubtitle>
+                </CardBody>
+            </Card>
+        </Column>
     }
 
-    <Card Style="@CardSize">
-        <CardImage Source="https://via.placeholder.com/1024"/>
-        <CardBody>
-            <CardTitle Size="3">New book</CardTitle>
-            <CardSubtitle>Import new book</CardSubtitle>
-        </CardBody>
-    </Card>
+    <Column ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnWidescreen.Is4.OnDesktop.Is12.OnTablet">
+        <Card>
+            <CardImage Source="https://via.placeholder.com/1024"/>
+            <CardBody>
+                <CardTitle Size="3">New book</CardTitle>
+                <CardSubtitle>Import new book</CardSubtitle>
+            </CardBody>
+        </Card>
+    </Column>
 </Div>
 
 
 @code
 {
     [Parameter]
-    public Book[] Books { get; init; } = Array.Empty<Book>();
+    [EditorRequired]
+    public BookshelfWithBooks? Bookshelf { get; set; }
+
+    [Inject]
+    private IExceptionHandler ExceptionHandler { get; init; } = null!;
+
+    [Inject]
+    private IBorowikManager BorowikManager { get; init; } = null!;
 
     private BookshelfEditModal _bookshelfEditModal = null!;
-
-        private const string CardSize = "width: 20%";
 
     private async Task OpenBookshelfEditModal()
     {
         await _bookshelfEditModal.ShowAsync();
+    }
+
+    private async Task SetSortModeAsync(BooksSortMode sortMode)
+    {
+        if (Bookshelf is null)
+            return;
+
+        await ExceptionHandler.HandleAsync(() =>
+            BorowikManager.SendRequestAsync(new SetBooksSortModeRequest(Bookshelf.Id, sortMode)));
+
+        Bookshelf = Bookshelf with { SortMode = sortMode };
     }
 }

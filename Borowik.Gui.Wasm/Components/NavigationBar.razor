@@ -47,7 +47,7 @@
     </BarMenu>
 </Bar>
 
-<NewBookshelfModal @ref="_newBookshelfModal" BookshelfCreated="LoadBookshelvesAsync"/>
+<NewBookshelfModal @ref="_newBookshelfModal" BookshelfCreated="OnBookshelfCreatedAsync"/>
 
 @code
 {
@@ -56,6 +56,9 @@
 
     [Inject]
     private IBorowikManager BorowikManager { get; init; } = null!;
+
+    [Inject]
+    private NavigationManager NavigationManager { get; init; } = null!;
 
     private NewBookshelfModal _newBookshelfModal = null!;
     private Bookshelf[] _bookshelves = Array.Empty<Bookshelf>();
@@ -75,5 +78,11 @@
     private async Task CreateBookshelfAsync()
     {
         await _newBookshelfModal.ShowAsync();
+    }
+
+    private async Task OnBookshelfCreatedAsync(Bookshelf bookshelf)
+    {
+        NavigationManager.NavigateTo($"/Bookshelf/{bookshelf.Id}");
+        await LoadBookshelvesAsync();
     }
 }

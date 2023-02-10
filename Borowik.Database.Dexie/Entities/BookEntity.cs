@@ -8,7 +8,7 @@ public record BookEntity
     [property: Index(IsPrimary = true, IsUnique = true)]
     Guid Id,
     [property: Index] Guid BookshelfId,
-    [property: Index] string Name,
+    [property: Index] string Title,
     [property: Index] string Author,
     [property: ByteIndex] byte[]? Cover,
     [property: Index] DateTime CreatedAt,
@@ -20,7 +20,7 @@ public record BookEntity
         return new Book(
             Id,
             BookshelfId,
-            new BookMetadata(Name, Author, Cover),
+            new BookMetadata(Title, Author, Cover),
             CreatedAt,
             LastOpenedAt);
     }
@@ -30,7 +30,7 @@ public record BookEntity
         return new BookEntity(
             baseEntity.Id,
             baseEntity.BookshelfId,
-            baseEntity.Metadata.Name,
+            baseEntity.Metadata.Title,
             baseEntity.Metadata.Author,
             baseEntity.Metadata.Cover,
             baseEntity.ImportedAt,

@@ -30,7 +30,7 @@
                     <CardImage Source="@($"https://picsum.photos/seed/{book.Id}/1024")"/>
                     <Progress Border="Border.RoundedZero" Value="@(Random.Shared.Next(1, 90))" Size="Size.Small"></Progress>
                     <CardBody>
-                        <CardTitle Size="3">@book.Metadata.Name</CardTitle>
+                        <CardTitle Size="3">@book.Metadata.Title</CardTitle>
                         <CardSubtitle>@book.Metadata.Author</CardSubtitle>
                     </CardBody>
                 </Card>
@@ -51,13 +51,16 @@
     </Column>
 </Div>
 
-<ImportBookModal @ref="_importBookModal"/>
+<ImportBookModal Bookshelf="Bookshelf" BookImported="BooksChanged" @ref="_importBookModal"/>
 
 @code
 {
     [Parameter]
     [EditorRequired]
     public BookshelfWithBooks? Bookshelf { get; set; }
+
+    [Parameter]
+    public EventCallback BooksChanged { get; set; }
 
     [Inject]
     private IExceptionHandler ExceptionHandler { get; init; } = null!;
@@ -88,8 +91,8 @@
             BooksSortMode.LastOpenedDescending => books.OrderByDescending(b => b.LastOpenedAt),
             BooksSortMode.ImportedAtAscending => books.OrderBy(b => b.ImportedAt),
             BooksSortMode.ImportedAtDescending => books.OrderByDescending(b => b.ImportedAt),
-            BooksSortMode.NameAscending => books.OrderBy(b => b.Metadata.Name),
-            BooksSortMode.NameDescending => books.OrderByDescending(b => b.Metadata.Name),
+            BooksSortMode.NameAscending => books.OrderBy(b => b.Metadata.Title),
+            BooksSortMode.NameDescending => books.OrderByDescending(b => b.Metadata.Title),
             BooksSortMode.AuthorAscending => books.OrderBy(b => b.Metadata.Author),
             BooksSortMode.AuthorDescending => books.OrderByDescending(b => b.Metadata.Author),
             _ => throw new InvalidOperationException($"Not supported sort mode '{Bookshelf.SortMode}'")

@@ -2,7 +2,7 @@ namespace Borowik.Books.Entities;
 
 public record BookMetadata
 (
-    string Name,
+    string Title,
     string Author,
     byte[]? Cover
 );

@@ -21,7 +21,8 @@
 @code {
 
     [Parameter]
-    public Bookshelf? Bookshelf { get; init; }
+    [EditorRequired]
+    public Bookshelf? Bookshelf { get; set; }
 
     private Modal _modal = null!;
 

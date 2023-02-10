@@ -3,12 +3,12 @@
 @using Borowik.Books.Entities
 
 <BookshelfHeader Bookshelf="_bookshelf"/>
-<BooksView Bookshelf="_bookshelf"/>
+<BooksView Bookshelf="_bookshelf" BooksChanged="LoadBookshelfAsync"/>
 
 @code
 {
     [Parameter]
-    public Guid BookshelfId { get; init; }
+    public Guid BookshelfId { get; set; }
 
     [Inject]
     private IExceptionHandler ExceptionHandler { get; init; } = null!;
@@ -22,6 +22,11 @@
     private BookshelfWithBooks? _bookshelf;
 
     protected override async Task OnParametersSetAsync()
+    {
+        await LoadBookshelfAsync();
+    }
+
+    private async Task LoadBookshelfAsync()
     {
         await LoadingIndicatorService.Show();
 

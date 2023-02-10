@@ -1,19 +1,62 @@
 @using Color = Blazorise.Color
 @using Borowik.Books.Entities
+@using Borowik.Books.Contracts
+@using System.Text
 
 <Modal @ref="_modal">
     <ModalContent>
         <ModalHeader>
             <ModalTitle Size="HeadingSize.Is4">Import</ModalTitle>
             <CloseButton/>
+
+
         </ModalHeader>
         <ModalBody>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            Adipisci aliquid amet cumque dolore excepturi incidunt.
-            Ipsum iusto molestias obcaecati omnis provident quam unde vitae voluptas.
+            <Div Flex="Flex.JustifyContent.Center">
+                <RadioGroup Color="Color.Secondary" TValue="RawBookType" Buttons @bind-CheckedValue="@_selectedBookType">
+                    @foreach (var type in GetAvailableBookTypes())
+                    {
+                        <Radio Value="@type">@type</Radio>
+                    }
+                </RadioGroup>
+            </Div>
+            <Div Padding="Padding.Is2">
+                @if (_selectedBookType == RawBookType.Debug)
+                {
+                    <Field>
+                        <FieldLabel>Title</FieldLabel>
+                        <FieldBody>
+                            <TextEdit Placeholder="Title" @bind-Text="@_debugTitle"/>
+                        </FieldBody>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Author</FieldLabel>
+                        <FieldBody>
+                            <TextEdit Placeholder="Author" @bind-Text="@_debugAuthor"/>
+                        </FieldBody>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Content</FieldLabel>
+                        <FieldBody>
+                            <TextEdit Placeholder="Content" @bind-Text="@_debugContent"/>
+                        </FieldBody>
+                    </Field>
+                }
+                else
+                {
+                    <FileEdit Changed="OnFileSelected"></FileEdit>
+                }
+            </Div>
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Type="ButtonType.Submit" PreventDefaultOnSubmit Clicked="ImportAsync">Import</Button>
+             @if (_selectedBookType == RawBookType.Debug)
+             {
+                 <Button Color="Color.Primary" Type="ButtonType.Submit" PreventDefaultOnSubmit Clicked="ImportDebugAsync">Import</Button>
+             }
+             else
+             {
+                <Button Color="Color.Primary" Type="ButtonType.Submit" Disabled="@(_file is null)" PreventDefaultOnSubmit Clicked="ImportAsync">Import</Button>
+             }
         </ModalFooter>
     </ModalContent>
 </Modal>
@@ -22,18 +65,100 @@
 @code {
 
     [Parameter]
-    public Bookshelf? Bookshelf { get; init; }
+    [EditorRequired]
+    public Bookshelf? Bookshelf { get; set; }
+
+    [Parameter]
+    public EventCallback BookImported { get; set; }
+
+    [Inject]
+    private IExceptionHandler ExceptionHandler { get; init; } = null!;
+
+    [Inject]
+    private IBorowikManager BorowikManager { get; init; } = null!;
+
+    [Inject]
+    private ILoadingIndicatorService LoadingIndicatorService { get; init; } = null!;
 
     private Modal _modal = null!;
+    private RawBookType _selectedBookType = GetAvailableBookTypes().First();
+    private IFileEntry? _file;
+
+    private string _debugTitle = string.Empty;
+    private string _debugAuthor = string.Empty;
+    private string _debugContent = string.Empty;
 
     public async Task ShowAsync()
     {
         await _modal.Show();
     }
 
+
+    private static IEnumerable<RawBookType> GetAvailableBookTypes()
+    {
+        var types = Enum.GetValues<RawBookType>()
+            .Where(t => t != RawBookType.Debug);
+
+        return IsDebug() ? types.Prepend(RawBookType.Debug) : types;
+    }
+
+    private void OnFileSelected(FileChangedEventArgs args)
+    {
+        Console.WriteLine(args.Files.Length);
+        Console.WriteLine(args.Files.FirstOrDefault());
+        _file = args.Files.FirstOrDefault();
+        Console.WriteLine(_file is null);
+    }
+
     private async Task ImportAsync()
     {
+        if (_file is null || Bookshelf is null)
+            return;
+
+        await LoadingIndicatorService.Show();
+        await ExceptionHandler.HandleAsync(async () =>
+        {
+            await using var fileStream = _file.OpenReadStream(100 * 1024 * 1024 /* 100MiB */);
+            await using var memoryStream = new MemoryStream();
+            await fileStream.CopyToAsync(memoryStream);
+
+            var fileData = memoryStream.ToArray();
+            await BorowikManager.SendRequestAsync(new ImportBookRequest(Bookshelf.Id, _selectedBookType, fileData));
+
+            await BookImported.InvokeAsync();
+        });
+        await LoadingIndicatorService.Hide();
+
         await _modal.Close(CloseReason.UserClosing);
+    }
+
+    private async Task ImportDebugAsync()
+    {
+        if (Bookshelf is null)
+            return;
+
+        await ExceptionHandler.HandleAsync(async () =>
+        {
+            var content = string.Join('|', _debugTitle, _debugAuthor, _debugContent);
+            var bytes = Encoding.UTF8.GetBytes(content);
+            await BorowikManager.SendRequestAsync(new ImportBookRequest(Bookshelf.Id, RawBookType.Debug, bytes));
+
+            await BookImported.InvokeAsync();
+        });
+        await LoadingIndicatorService.Hide();
+
+        await _modal.Close(CloseReason.UserClosing);
+    }
+
+    private static bool IsDebug()
+    {
+#if DEBUG
+        return true;
+#endif
+
+#pragma warning disable CS0162
+        return false;
+#pragma warning restore CS0162
     }
 
 }

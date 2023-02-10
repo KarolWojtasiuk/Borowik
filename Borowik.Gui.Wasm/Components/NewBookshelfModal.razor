@@ -2,6 +2,7 @@
 @using Borowik.Books
 @using System.Drawing
 @using Borowik.Books.Contracts
+@using Borowik.Books.Entities
 @using Color = Blazorise.Color
 @using Size = Blazorise.Size
 <Form>
@@ -15,9 +16,9 @@
                 <Validations @ref="_validations" Mode="ValidationMode.Manual" Model="@_model" HandlerType="typeof(FluentValidationHandler)">
                     <Validation>
                         <Field>
-                            <FieldLabel>Name</FieldLabel>
+                            <FieldLabel>Title</FieldLabel>
                             <FieldBody>
-                                <TextEdit Placeholder="Name" @bind-Text="@_model.Name">
+                                <TextEdit Placeholder="Title" @bind-Text="@_model.Name">
                                     <Feedback>
                                         <ValidationError/>
                                     </Feedback>
@@ -61,7 +62,7 @@
 
 @code {
 
-    [Parameter] public EventCallback BookshelfCreated { get; init; }
+    [Parameter] public EventCallback<Bookshelf> BookshelfCreated { get; set; }
 
     [Inject]
     private IExceptionHandler ExceptionHandler { get; init; } = null!;
@@ -82,13 +83,16 @@
     {
         if (await _validations.ValidateAll())
         {
-            await ExceptionHandler.HandleAsync(() =>
+            var response = await ExceptionHandler.HandleAsync(() =>
                 BorowikManager.SendRequestAsync(
                     new CreateBookshelfRequest(_model.Name, _model.Description, ColorTranslator.FromHtml(_model.Color)),
                     CancellationToken.None));
 
-            await BookshelfCreated.InvokeAsync();
             await _modal.Close(CloseReason.UserClosing);
+            await BookshelfCreated.InvokeAsync(response.Bookshelf);
+
+            _model = new BookshelfModel();
+            await _validations.ClearAll();
         }
     }
 

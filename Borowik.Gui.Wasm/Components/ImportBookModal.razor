@@ -125,8 +125,8 @@
             var fileData = memoryStream.ToArray();
             await BorowikManager.SendRequestAsync(new ImportBookRequest(Bookshelf.Id, _selectedBookType, fileData));
 
-            await BookImported.InvokeAsync();
         });
+        await BookImported.InvokeAsync();
         await LoadingIndicatorService.Hide();
 
         await _modal.Close(CloseReason.UserClosing);
@@ -142,10 +142,13 @@
             var content = string.Join('|', _debugTitle, _debugAuthor, _debugContent);
             var bytes = Encoding.UTF8.GetBytes(content);
             await BorowikManager.SendRequestAsync(new ImportBookRequest(Bookshelf.Id, RawBookType.Debug, bytes));
-
-            await BookImported.InvokeAsync();
         });
+        await BookImported.InvokeAsync();
         await LoadingIndicatorService.Hide();
+
+        _debugTitle = string.Empty;
+        _debugAuthor = string.Empty;
+        _debugContent = string.Empty;
 
         await _modal.Close(CloseReason.UserClosing);
     }

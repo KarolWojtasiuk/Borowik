@@ -107,7 +107,7 @@
         await LoadingIndicatorService.Show();
 
         await ExceptionHandler.HandleAsync(() =>
-            BorowikManager.SendRequestAsync(new SetBooksSortModeRequest(Bookshelf.Id, sortMode)));
+            BorowikManager.SendRequestAsync(new UpdateBookshelfRequest(Bookshelf.Id, SortMode: sortMode)));
 
         Bookshelf = Bookshelf with { SortMode = sortMode };
 

@@ -16,13 +16,16 @@
     </Button>
 </Div>
 
-<EditBookshelfModal @ref="_editBookshelfModal" Bookshelf="Bookshelf"/>
+<EditBookshelfModal @ref="_editBookshelfModal" Bookshelf="Bookshelf" BookshelfUpdated="BookshelfUpdated"/>
 
 @code
 {
     [Parameter]
     [EditorRequired]
     public Bookshelf? Bookshelf { get; set; }
+
+    [Parameter]
+    public EventCallback BookshelfUpdated { get; set; }
 
     private EditBookshelfModal _editBookshelfModal = null!;
 

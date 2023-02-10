@@ -2,7 +2,7 @@
 @using Borowik.Books.Contracts
 @using Borowik.Books.Entities
 
-<BookshelfHeader Bookshelf="_bookshelf"/>
+<BookshelfHeader Bookshelf="_bookshelf" BookshelfUpdated="OnBookshelfUpdated"/>
 <BooksView Bookshelf="_bookshelf" BooksChanged="LoadBookshelfAsync"/>
 
 @code
@@ -36,5 +36,10 @@
         _bookshelf = response.BookshelfWithBooks;
 
         await LoadingIndicatorService.Hide();
+    }
+
+    private async Task OnBookshelfUpdated()
+    {
+        await LoadBookshelfAsync();
     }
 }

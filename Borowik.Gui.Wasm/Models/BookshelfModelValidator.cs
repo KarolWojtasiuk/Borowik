@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace Borowik.Gui.Wasm.Models;
 
-public class BookshelfModelValidator : AbstractValidator<BookshelfModel>
+public class NewBookshelfModelValidator : AbstractValidator<NewBookshelfModel>
 {
-    public BookshelfModelValidator()
+    public NewBookshelfModelValidator()
     {
         RuleFor(e => e.Name)
             .MinimumLength(3)

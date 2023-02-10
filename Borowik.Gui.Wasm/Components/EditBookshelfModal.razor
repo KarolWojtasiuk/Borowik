@@ -1,16 +1,54 @@
 @using Color = Blazorise.Color
 @using Borowik.Books.Entities
+@using Borowik.Books.Contracts
+@using System.Drawing
+@using Size = Blazorise.Size
 
 <Modal @ref="_modal">
     <ModalContent>
         <ModalHeader>
-            <ModalTitle Size="HeadingSize.Is4">Bookshelf</ModalTitle>
+            <ModalTitle Size="HeadingSize.Is4">Edit Bookshelf</ModalTitle>
             <CloseButton/>
         </ModalHeader>
         <ModalBody>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            Adipisci aliquid amet cumque dolore excepturi incidunt.
-            Ipsum iusto molestias obcaecati omnis provident quam unde vitae voluptas.
+            <Validations @ref="_validations" Mode="ValidationMode.Manual" Model="@_model" HandlerType="typeof(FluentValidationHandler)">
+                <Validation>
+                    <Field>
+                        <FieldLabel><Text Italic="@(_model?.Name is not null)">Name</Text></FieldLabel>
+                        <FieldBody>
+                            <TextEdit Placeholder="@Bookshelf?.Name" @bind-Text="@_model.Name">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </TextEdit>
+                        </FieldBody>
+                    </Field>
+                </Validation>
+                <Validation>
+                    <Field>
+                        <FieldLabel><Text Italic="@(_model?.Description is not null)">Description</Text></FieldLabel>
+                        <FieldBody>
+                            <TextEdit Placeholder="@Bookshelf?.Description" @bind-Text="@_model.Description">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </TextEdit>
+                        </FieldBody>
+                    </Field>
+                </Validation>
+                <Validation>
+                    <Field>
+                        <FieldLabel><Text Italic="@(_model?.Color is not null)">Color</Text></FieldLabel>
+                        <FieldBody>
+                            <ColorEdit Size="Size.Medium" @bind-Color="@_model.Color">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </ColorEdit>
+                        </FieldBody>
+                    </Field>
+                </Validation>
+            </Validations>
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Primary" Type="ButtonType.Submit" PreventDefaultOnSubmit Clicked="SaveAsync">Save</Button>
@@ -24,7 +62,18 @@
     [EditorRequired]
     public Bookshelf? Bookshelf { get; set; }
 
+    [Parameter]
+    public EventCallback BookshelfUpdated { get; set; }
+
+    [Inject]
+    private IExceptionHandler ExceptionHandler { get; init; } = null!;
+
+    [Inject]
+    private IBorowikManager BorowikManager { get; init; } = null!;
+
     private Modal _modal = null!;
+    private Validations _validations = null!;
+    private EditBookshelfModel _model = new();
 
     public async Task ShowAsync()
     {
@@ -33,7 +82,26 @@
 
     private async Task SaveAsync()
     {
+        if (Bookshelf is null)
+            return;
+
+        if (!await _validations.ValidateAll())
+            return;
+
+        var response = await ExceptionHandler.HandleAsync(() =>
+            BorowikManager.SendRequestAsync(
+                new UpdateBookshelfRequest(
+                    Bookshelf.Id,
+                    _model.Name,
+                    _model.Description,
+                    _model.Color is null ? null : ColorTranslator.FromHtml(_model.Color)),
+                CancellationToken.None));
+
         await _modal.Close(CloseReason.UserClosing);
+        await BookshelfUpdated.InvokeAsync();
+
+        _model = new EditBookshelfModel();
+        await _validations.ClearAll();
     }
 
 }

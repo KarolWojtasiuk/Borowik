@@ -1,6 +1,6 @@
 namespace Borowik.Gui.Wasm.Models;
 
-public class BookshelfModel
+public class NewBookshelfModel
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;

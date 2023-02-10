@@ -62,7 +62,8 @@
 
 @code {
 
-    [Parameter] public EventCallback<Bookshelf> BookshelfCreated { get; set; }
+    [Parameter]
+    public EventCallback<Bookshelf> BookshelfCreated { get; set; }
 
     [Inject]
     private IExceptionHandler ExceptionHandler { get; init; } = null!;
@@ -72,7 +73,7 @@
 
     private Modal _modal = null!;
     private Validations _validations = null!;
-    private BookshelfModel _model = new();
+    private NewBookshelfModel _model = new();
 
     public async Task ShowAsync()
     {
@@ -81,19 +82,18 @@
 
     private async Task CreateAsync()
     {
-        if (await _validations.ValidateAll())
-        {
-            var response = await ExceptionHandler.HandleAsync(() =>
-                BorowikManager.SendRequestAsync(
-                    new CreateBookshelfRequest(_model.Name, _model.Description, ColorTranslator.FromHtml(_model.Color)),
-                    CancellationToken.None));
+        if (!await _validations.ValidateAll())
+            return;
 
-            await _modal.Close(CloseReason.UserClosing);
-            await BookshelfCreated.InvokeAsync(response.Bookshelf);
+        var response = await ExceptionHandler.HandleAsync(() =>
+            BorowikManager.SendRequestAsync(
+                new CreateBookshelfRequest(_model.Name, _model.Description, ColorTranslator.FromHtml(_model.Color)),
+                CancellationToken.None));
 
-            _model = new BookshelfModel();
-            await _validations.ClearAll();
-        }
+        await _modal.Close(CloseReason.UserClosing);
+        await BookshelfCreated.InvokeAsync(response.Bookshelf);
+
+        _model = new NewBookshelfModel();
+        await _validations.ClearAll();
     }
-
 }

@@ -26,8 +26,15 @@
     {
         <Column ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnWidescreen.Is6.OnTablet.Is12.OnMobile">
             <Button Type="ButtonType.Link" To="@($"/Book/{book.Id}")">
-                <Card Class="book-card">
-                    <CardImage Source="@($"https://picsum.photos/seed/{book.Id}/1024")"/>
+                <Card>
+                    @if (book.Metadata.Cover is null)
+                    {
+                        <CardImage Source="@($"https://picsum.photos/seed/{book.Id}/1024")"/>
+                    }
+                    else
+                    {
+                        <CardImage Source="@($"data:{book.Metadata.Cover.MimeType};base64,{Convert.ToBase64String(book.Metadata.Cover.Data)}")"/>
+                    }
                     <Progress Border="Border.RoundedZero" Value="@(Random.Shared.Next(1, 90))" Size="Size.Small"></Progress>
                     <CardBody>
                         <CardTitle Size="3">@book.Metadata.Title</CardTitle>

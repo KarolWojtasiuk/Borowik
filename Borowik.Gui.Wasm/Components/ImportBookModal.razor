@@ -2,6 +2,7 @@
 @using Borowik.Books.Entities
 @using Borowik.Books.Contracts
 @using System.Text
+@using System.Diagnostics
 
 <Modal @ref="_modal">
     <ModalContent>
@@ -104,10 +105,7 @@
 
     private void OnFileSelected(FileChangedEventArgs args)
     {
-        Console.WriteLine(args.Files.Length);
-        Console.WriteLine(args.Files.FirstOrDefault());
         _file = args.Files.FirstOrDefault();
-        Console.WriteLine(_file is null);
     }
 
     private async Task ImportAsync()
@@ -116,16 +114,21 @@
             return;
 
         await LoadingIndicatorService.Show();
+
         await ExceptionHandler.HandleAsync(async () =>
         {
+            var stopwatch = Stopwatch.StartNew();
+
             await using var fileStream = _file.OpenReadStream(100 * 1024 * 1024 /* 100MiB */);
             await using var memoryStream = new MemoryStream();
             await fileStream.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
 
-            var fileData = memoryStream.ToArray();
-            await BorowikManager.SendRequestAsync(new ImportBookRequest(Bookshelf.Id, _selectedBookType, fileData));
-
+            await BorowikManager.SendRequestAsync(new ImportBookRequest(Bookshelf.Id, _selectedBookType, memoryStream));
+            stopwatch.Stop();
+            Console.WriteLine($"Imported book in {stopwatch.ElapsedMilliseconds}ms");
         });
+
         await BookImported.InvokeAsync();
         await LoadingIndicatorService.Hide();
 
@@ -141,7 +144,8 @@
         {
             var content = string.Join('|', _debugTitle, _debugAuthor, _debugContent);
             var bytes = Encoding.UTF8.GetBytes(content);
-            await BorowikManager.SendRequestAsync(new ImportBookRequest(Bookshelf.Id, RawBookType.Debug, bytes));
+            using var memoryStream = new MemoryStream(bytes);
+            await BorowikManager.SendRequestAsync(new ImportBookRequest(Bookshelf.Id, RawBookType.Debug, memoryStream));
         });
         await BookImported.InvokeAsync();
         await LoadingIndicatorService.Hide();

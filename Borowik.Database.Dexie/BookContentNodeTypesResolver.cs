@@ -6,21 +6,15 @@ using Borowik.Books.Entities;
 
 namespace Borowik.Database.Dexie;
 
-internal class PolymorphicTypeInfoResolver : DefaultJsonTypeInfoResolver
+internal class BookContentNodeTypesResolver : DefaultJsonTypeInfoResolver
 {
-    public PolymorphicTypeInfoResolver(params Type[] baseTypes)
-    {
-        _baseTypes = baseTypes;
-    }
-
-    private readonly Type[] _baseTypes;
     private readonly Dictionary<Type, JsonDerivedType[]> _derivedTypesCache = new();
 
     public override JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)
     {
         var typeInfo = base.GetTypeInfo(type, options);
 
-        if (!_baseTypes.Contains(typeInfo.Type))
+        if (typeInfo.Type != typeof(IBookContentNode))
             return typeInfo;
 
         typeInfo.PolymorphismOptions = new JsonPolymorphismOptions
@@ -46,10 +40,23 @@ internal class PolymorphicTypeInfoResolver : DefaultJsonTypeInfoResolver
 
     private static JsonDerivedType[] FindDerivedTypesForBaseType(Type type)
     {
-        return type.Assembly.GetTypes()
+        var baseTypeDiscriminator = GetTypeDiscriminator(type);
+
+        var derivedTypes = type.Assembly.GetTypes()
             .Where(t => !t.IsAbstract && t.IsAssignableTo(type))
             .Select(t => new JsonDerivedType(t, GetTypeDiscriminator(t)))
             .ToArray();
+
+        if (derivedTypes.Any(t => t.TypeDiscriminator is null))
+            throw new InvalidOperationException($"Every derived type of {type.Name} must have type discriminator");
+
+        if (derivedTypes.Any(t => t.TypeDiscriminator as string == baseTypeDiscriminator))
+            throw new InvalidOperationException("Derived type cannot have the same type discriminator as base type");
+
+        if (derivedTypes.GroupBy(t => t.TypeDiscriminator).Any(g => g.Count() > 1))
+            throw new InvalidOperationException("Multiple derived type cannot have the same type discriminator");
+
+        return derivedTypes;
     }
 
     private static string GetTypeDiscriminator(Type type)

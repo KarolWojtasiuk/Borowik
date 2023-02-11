@@ -10,17 +10,22 @@ public record BookEntity
     [property: Index] Guid BookshelfId,
     [property: Index] string Title,
     [property: Index] string Author,
-    [property: ByteIndex] byte[]? Cover,
+    [property: ByteIndex] byte[]? CoverData,
+    [property: Index] string? CoverMimeType,
     [property: Index] DateTime CreatedAt,
     [property: Index] DateTime? LastOpenedAt
 ) : IBorowikEntityStore, IEntity<BookEntity, Book>
 {
     public Book Map()
     {
+        var cover = CoverData is null || CoverMimeType is null
+            ? null
+            : new BookImage(CoverData, CoverMimeType);
+
         return new Book(
             Id,
             BookshelfId,
-            new BookMetadata(Title, Author, Cover),
+            new BookMetadata(Title, Author, cover),
             CreatedAt,
             LastOpenedAt);
     }
@@ -32,7 +37,8 @@ public record BookEntity
             baseEntity.BookshelfId,
             baseEntity.Metadata.Title,
             baseEntity.Metadata.Author,
-            baseEntity.Metadata.Cover,
+            baseEntity.Metadata.Cover?.Data,
+            baseEntity.Metadata.Cover?.MimeType,
             baseEntity.ImportedAt,
             baseEntity.LastOpenedAt);
     }

@@ -1,4 +1,3 @@
-using System.Text;
 using Borowik.Books.Entities;
 using Borowik.Services;
 using Scrutor;
@@ -17,13 +16,16 @@ internal class PlainTextRawBookTypeParser : IRawBookTypeParser
 
     public RawBookType SupportedType => RawBookType.PlainText;
 
-    public Task<(BookContentPage[], BookMetadata)> ParseAsync(byte[] content, CancellationToken cancellationToken)
+    public async Task<(BookContentPage[], BookMetadata)> ParseAsync(Stream stream, CancellationToken cancellationToken)
     {
-        var node = new BookContentNodes.PlainTextNode(_guidProvider.Generate(), Encoding.UTF8.GetString(content));
+        using var streamReader = new StreamReader(stream);
+        var text = await streamReader.ReadToEndAsync(cancellationToken);
+
+        var node = new BookContentNodes.PlainTextNode(_guidProvider.Generate(), text);
         var pages = new [] { new BookContentPage(new IBookContentNode[] { node }) };
 
         var metadata = new BookMetadata("Plain Text", string.Empty, null);
 
-        return Task.FromResult((pages, metadata));
+        return (pages, metadata);
     }
 }

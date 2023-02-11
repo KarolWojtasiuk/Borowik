@@ -11,7 +11,7 @@ public static class BookContentSerializerOptionsProvider
     {
         return _options ??= new JsonSerializerOptions
         {
-            TypeInfoResolver = new PolymorphicTypeInfoResolver(typeof(IBookContentNode))
+            TypeInfoResolver = new BookContentNodeTypesResolver()
         };
     }
 }

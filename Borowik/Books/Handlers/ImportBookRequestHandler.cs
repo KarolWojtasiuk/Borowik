@@ -33,7 +33,7 @@ internal class ImportBookRequestHandler : IRequestHandler<ImportBookRequest, Imp
         if (!await _bookshelfRepository.ExistsAsync(request.BookshelfId, cancellationToken))
             throw new BorowikException($"Bookshelf with Id '{request.BookshelfId}' does not exist");
 
-        var (pages, metadata) = await _rawBookParser.ParseAsync(request.Type, request.Data, cancellationToken);
+        var (pages, metadata) = await _rawBookParser.ParseAsync(request.Type, request.Stream, cancellationToken);
 
         var id = _guidProvider.Generate();
         var book = new Book(id, request.BookshelfId, metadata, _dateTimeProvider.GetUtcNew(), null);

@@ -1,4 +1,3 @@
-using System.Text;
 using Borowik.Books.Entities;
 using Borowik.Services;
 using Scrutor;
@@ -17,9 +16,11 @@ internal class DebugRawBookTypeParser : IRawBookTypeParser
 
     public RawBookType SupportedType => RawBookType.Debug;
 
-    public Task<(BookContentPage[], BookMetadata)> ParseAsync(byte[] content, CancellationToken cancellationToken)
+    public async Task<(BookContentPage[], BookMetadata)> ParseAsync(Stream stream, CancellationToken cancellationToken)
     {
-        var parts = Encoding.UTF8.GetString(content).Split('|', 3);
+        using var streamReader = new StreamReader(stream);
+        var text = await streamReader.ReadToEndAsync(cancellationToken);
+        var parts = text.Split('|', 3);
         Array.Resize(ref parts, 3);
 
         var node = new BookContentNodes.PlainTextNode(_guidProvider.Generate(), parts[2]);
@@ -27,6 +28,6 @@ internal class DebugRawBookTypeParser : IRawBookTypeParser
 
         var metadata = new BookMetadata(parts[0], parts[1], null);
 
-        return Task.FromResult((pages, metadata));
+        return (pages, metadata);
     }
 }

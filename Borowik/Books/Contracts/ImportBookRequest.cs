@@ -2,4 +2,4 @@ using Borowik.Books.Entities;
 
 namespace Borowik.Books.Contracts;
 
-public record ImportBookRequest(Guid BookshelfId, RawBookType Type, byte[] Data) : IBorowikRequest<ImportBookResponse>;
+public record ImportBookRequest(Guid BookshelfId, RawBookType Type, Stream Stream) : IBorowikRequest<ImportBookResponse>;

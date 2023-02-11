@@ -2,6 +2,6 @@ namespace Borowik.Books.Entities;
 
 public interface IBookContentNode
 {
-    public static abstract string Type { get; }
+    public static virtual string Type => "!!!EMPTY!!!";
     public Guid Id { get; }
 };

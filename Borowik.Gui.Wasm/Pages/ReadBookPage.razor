@@ -1,9 +1,90 @@
 @page "/Book/{bookId:guid}"
+@using Borowik.Books.Entities
+@using Borowik.Books.Contracts
 
-<DisplayHeading>@BookId</DisplayHeading>
+<DisplayHeading>@_book?.Metadata.Title</DisplayHeading>
+
+<Pagination Flex="Flex.Wrap">
+    @foreach(var number in GetNumberedPages().Select(p => p.Number))
+    {
+
+        <Image s></Image>
+        <PaginationItem Active="_selectedPage == number">
+            <PaginationLink Clicked="() => _selectedPage = number">@number</PaginationLink>
+        </PaginationItem>
+    }
+</Pagination>
+
+<Div Flex="Flex.JustifyContent.Center">
+    @RenderSelectedPage()
+</Div>
 
 @code
 {
     [Parameter]
     public Guid BookId { get; set; }
+
+    [Inject]
+    private IExceptionHandler ExceptionHandler { get; init; } = null!;
+
+    [Inject]
+    private IBorowikManager BorowikManager { get; init; } = null!;
+
+    [Inject]
+    private ILoadingIndicatorService LoadingIndicatorService { get; init; } = null!;
+
+    private Book? _book;
+    private BookContent? _content;
+    private int _selectedPage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadBookAsync();
+    }
+
+    private async Task LoadBookAsync()
+    {
+        await LoadingIndicatorService.Show();
+
+        var response = await ExceptionHandler.HandleAsync(() =>
+            BorowikManager.SendRequestAsync(new OpenBookRequest(BookId), CancellationToken.None));
+
+        _book = response.Book;
+        _content = response.Content;
+
+        await LoadingIndicatorService.Hide();
+    }
+
+    private IEnumerable<(int Number, BookContentPage Page)> GetNumberedPages()
+    {
+        return _content is null
+            ? Enumerable.Empty<(int Number, BookContentPage Page)>()
+            : _content.Pages.Select((p, i) => (i, p));
+    }
+
+    private RenderFragment RenderSelectedPage() => builder =>
+    {
+        if (_content is null || _content.Pages.Length < _selectedPage)
+            return;
+
+        foreach (var node in _content.Pages[_selectedPage].Nodes)
+            RenderNode(node).Invoke(builder);
+    };
+
+    private static RenderFragment RenderNode(IBookContentNode node) => builder =>
+    {
+        if (node is BookContentNodes.PlainTextNode plainTextNode)
+        {
+            builder.OpenComponent<Text>(0);
+            builder.AddContent(1, plainTextNode.Value);
+            builder.CloseComponent();
+        }
+
+        if (node is BookContentNodes.ImageNode imageNode)
+        {
+            builder.OpenComponent<Image>(0);
+            builder.AddAttribute(1, nameof(Image.Source), $"data:{imageNode.Value.MimeType};base64,{Convert.ToBase64String(imageNode.Value.Data)}");
+            builder.CloseComponent();
+        }
+    };
 }

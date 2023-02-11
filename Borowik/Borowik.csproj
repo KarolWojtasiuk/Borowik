@@ -11,5 +11,7 @@
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" />
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+        <PackageReference Include="SixLabors.ImageSharp" />
+        <PackageReference Include="PdfPig" />
     </ItemGroup>
 </Project>

@@ -6,4 +6,9 @@ public static class BookContentNodes
     {
         public static string Type => "PlainText";
     }
+
+    public record ImageNode(Guid Id, BookImage Value) : IBookContentNode
+    {
+        public static string Type => "Image";
+    }
 }

@@ -7,8 +7,6 @@
 <Pagination Flex="Flex.Wrap">
     @foreach(var number in GetNumberedPages().Select(p => p.Number))
     {
-
-        <Image s></Image>
         <PaginationItem Active="_selectedPage == number">
             <PaginationLink Clicked="() => _selectedPage = number">@number</PaginationLink>
         </PaginationItem>

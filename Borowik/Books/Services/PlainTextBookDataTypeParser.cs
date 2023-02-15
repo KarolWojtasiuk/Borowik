@@ -25,7 +25,7 @@ internal class PlainTextBookDataTypeParser : IBookDataTypeParser
     public Task<BookContent> ParseAsync(byte[] data, CancellationToken cancellationToken)
     {
         var text = Encoding.UTF8.GetString(data);
-        var node = new BookContentNodes.PlainTextNode(_guidProvider.Generate(), text);
+        var node = new BookContentNodes.ParagraphNode(_guidProvider.Generate(), text);
         var pages = new [] { new BookContentPage(new IBookContentNode[] { node }) };
 
         return Task.FromResult(new BookContent(pages));

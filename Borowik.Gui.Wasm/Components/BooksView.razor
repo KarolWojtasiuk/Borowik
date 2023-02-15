@@ -24,7 +24,7 @@
 <Div Flex="Flex.Wrap.JustifyContent.Center" Padding="Padding.Is3">
     @foreach (var book in OrderBooks())
     {
-        <Column ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnWidescreen.Is6.OnTablet.Is12.OnMobile">
+        <Column ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnWidescreen.Is6.OnTablet.Is12.OnMobile" Padding="Padding.Is2">
             <Card>
                 <Button Padding="Padding.Is0" Border="Border.Is0" Type="ButtonType.Link" To="@($"/Book/{book.Id}")">
                     @if (book.Metadata.Cover is null)

@@ -13,5 +13,6 @@
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
         <PackageReference Include="SixLabors.ImageSharp" />
         <PackageReference Include="PdfPig" />
+        <PackageReference Include="VersOne.Epub" />
     </ItemGroup>
 </Project>

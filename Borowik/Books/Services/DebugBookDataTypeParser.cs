@@ -32,7 +32,7 @@ internal class DebugBookDataTypeParser : IBookDataTypeParser
         var parts = text.Split('|', 3);
         Array.Resize(ref parts, 3);
 
-        var node = new BookContentNodes.PlainTextNode(_guidProvider.Generate(), parts[2]);
+        var node = new BookContentNodes.ParagraphNode(_guidProvider.Generate(), parts[2]);
         var pages = new[] { new BookContentPage(new IBookContentNode[] { node }) };
 
         return Task.FromResult(new BookContent(pages));

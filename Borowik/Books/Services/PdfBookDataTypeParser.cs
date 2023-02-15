@@ -43,7 +43,7 @@ internal class PdfBookDataTypeParser : IBookDataTypeParser
         var nodes = new List<IBookContentNode>();
 
         if (!string.IsNullOrWhiteSpace(page.Text))
-            nodes.Add(new BookContentNodes.PlainTextNode(_guidProvider.Generate(), page.Text));
+            nodes.Add(new BookContentNodes.ParagraphNode(_guidProvider.Generate(), page.Text));
 
         if (page.NumberOfImages > 0)
         {

@@ -7,25 +7,30 @@ using UglyToad.PdfPig.Content;
 
 namespace Borowik.Books.Services;
 
-[ServiceDescriptor(typeof(IRawBookTypeParser))]
-internal class PdfRawBookTypeParser : IRawBookTypeParser
+[ServiceDescriptor(typeof(IBookDataTypeParser))]
+internal class PdfBookDataTypeParser : IBookDataTypeParser
 {
     private readonly IGuidProvider _guidProvider;
 
-    public PdfRawBookTypeParser(IGuidProvider guidProvider)
+    public PdfBookDataTypeParser(IGuidProvider guidProvider)
     {
         _guidProvider = guidProvider;
     }
 
-    public RawBookType SupportedType => RawBookType.Pdf;
+    public BookType SupportedType => BookType.Pdf;
 
-    public Task<(BookContentPage[], BookMetadata)> ParseAsync(Stream stream, CancellationToken cancellationToken)
+    public Task<BookMetadata> ExtractMetadataAsync(byte[] data, CancellationToken cancellationToken)
     {
-        using var pdf = PdfDocument.Open(stream);
-        var metadata = ParseMetadata(pdf);
+        using var pdf = PdfDocument.Open(data);
+        return Task.FromResult(ParseMetadata(pdf));
+    }
+
+    public Task<BookContentPage[]> ParseAsync(byte[] data, CancellationToken cancellationToken)
+    {
+        using var pdf = PdfDocument.Open(data);
         var pages = pdf.GetPages().Select(ParsePage).ToArray();
 
-        return Task.FromResult((pages, metadata));
+        return Task.FromResult(pages);
     }
 
     private BookContentPage ParsePage(Page page)
@@ -57,7 +62,8 @@ internal class PdfRawBookTypeParser : IRawBookTypeParser
         return new BookMetadata(
             string.IsNullOrEmpty(title) ? "PDF File" : title,
             pdf.Information.Author,
-            GetCoverImage(pdf));
+            GetCoverImage(pdf),
+            BookType.Pdf);
     }
 
     private static BookImage? GetCoverImage(PdfDocument pdf)

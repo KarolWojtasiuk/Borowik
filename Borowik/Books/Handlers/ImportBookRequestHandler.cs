@@ -12,20 +12,20 @@ internal class ImportBookRequestHandler : IRequestHandler<ImportBookRequest, Imp
     private readonly IBookRepository _bookRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IGuidProvider _guidProvider;
-    private readonly IRawBookParser _rawBookParser;
+    private readonly IBookDataParser _bookDataParser;
 
     public ImportBookRequestHandler(
         IBookshelfRepository bookshelfRepository,
         IBookRepository bookRepository,
         IDateTimeProvider dateTimeProvider,
         IGuidProvider guidProvider,
-        IRawBookParser rawBookParser)
+        IBookDataParser bookDataParser)
     {
         _bookshelfRepository = bookshelfRepository;
         _bookRepository = bookRepository;
         _dateTimeProvider = dateTimeProvider;
         _guidProvider = guidProvider;
-        _rawBookParser = rawBookParser;
+        _bookDataParser = bookDataParser;
     }
 
     public async Task<ImportBookResponse> Handle(ImportBookRequest request, CancellationToken cancellationToken)
@@ -33,13 +33,12 @@ internal class ImportBookRequestHandler : IRequestHandler<ImportBookRequest, Imp
         if (!await _bookshelfRepository.ExistsAsync(request.BookshelfId, cancellationToken))
             throw new BorowikException($"Bookshelf with Id '{request.BookshelfId}' does not exist");
 
-        var (pages, metadata) = await _rawBookParser.ParseAsync(request.Type, request.Stream, cancellationToken);
+        var metadata = await _bookDataParser.ExtractMetadataAsync(request.Type, request.Data, cancellationToken);
 
         var id = _guidProvider.Generate();
         var book = new Book(id, request.BookshelfId, metadata, _dateTimeProvider.GetUtcNew(), null);
-        var content = new BookContent(id, pages);
 
-        await _bookRepository.CreateAsync(book, content, cancellationToken);
+        await _bookRepository.CreateAsync(book, request.Data, cancellationToken);
 
         return new ImportBookResponse(book);
     }

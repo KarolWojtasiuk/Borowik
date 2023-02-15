@@ -11,7 +11,7 @@ public record BookshelfEntity
     [property: Index] int Color,
     [property: Index] BooksSortMode SortMode,
     [property: Index] DateTime CreatedAt
-) : IBorowikEntityStore, IEntity<BookshelfEntity, Bookshelf>
+) : IBorowikEntityStore
 {
     public Bookshelf Map()
     {

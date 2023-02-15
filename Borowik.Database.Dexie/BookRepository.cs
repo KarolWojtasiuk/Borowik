@@ -38,22 +38,22 @@ internal class BookRepository : IBookRepository
         return books.Select(b => b.Map()).ToArray();
     }
 
-    public async Task<BookContent> GetContentAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<byte[]> GetDataAsync(Guid id, CancellationToken cancellationToken)
     {
         var db = await _dbProvider.GetAsync();
-        var entity = await db.BookContentEntities().Get(id)
+        var entity = await db.BookDataEntities().Get(id)
                      ?? throw new BorowikException($"Book with Id '{id}' does not exist in database");
 
-        return entity.Map();
+        return entity.Data;
     }
 
-    public async Task CreateAsync(Book book, BookContent content, CancellationToken cancellationToken)
+    public async Task CreateAsync(Book book, byte[] data, CancellationToken cancellationToken)
     {
         var db = await _dbProvider.GetAsync();
         await db.Transaction(async _ =>
         {
             await db.BookEntities().Add(BookEntity.Map(book));
-            await db.BookContentEntities().Add(BookContentEntity.Map(content));
+            await db.BookDataEntities().Add(new BookDataEntity(book.Id, data));
         });
     }
 

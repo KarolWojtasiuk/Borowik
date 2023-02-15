@@ -5,16 +5,16 @@ namespace Borowik.Database.Dexie.Entities;
 
 public record BookEntity
 (
-    [property: Index(IsPrimary = true, IsUnique = true)]
-    Guid Id,
+    [property: Index(IsPrimary = true, IsUnique = true)] Guid Id,
     [property: Index] Guid BookshelfId,
     [property: Index] string Title,
     [property: Index] string Author,
     [property: ByteIndex] byte[]? CoverData,
     [property: Index] string? CoverMimeType,
+    [property: Index] int Type,
     [property: Index] DateTime CreatedAt,
     [property: Index] DateTime? LastOpenedAt
-) : IBorowikEntityStore, IEntity<BookEntity, Book>
+) : IBorowikEntityStore
 {
     public Book Map()
     {
@@ -25,7 +25,7 @@ public record BookEntity
         return new Book(
             Id,
             BookshelfId,
-            new BookMetadata(Title, Author, cover),
+            new BookMetadata(Title, Author, cover, (BookType)Type),
             CreatedAt,
             LastOpenedAt);
     }
@@ -39,6 +39,7 @@ public record BookEntity
             baseEntity.Metadata.Author,
             baseEntity.Metadata.Cover?.Data,
             baseEntity.Metadata.Cover?.MimeType,
+            (int)baseEntity.Metadata.Type,
             baseEntity.ImportedAt,
             baseEntity.LastOpenedAt);
     }

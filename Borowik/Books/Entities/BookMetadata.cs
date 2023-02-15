@@ -4,5 +4,6 @@ public record BookMetadata
 (
     string Title,
     string Author,
-    BookImage? Cover
+    BookImage? Cover,
+    BookType Type
 );

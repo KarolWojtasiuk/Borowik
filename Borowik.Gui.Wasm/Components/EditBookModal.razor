@@ -2,21 +2,20 @@
 @using Borowik.Books.Entities
 @using Borowik.Books.Contracts
 @using System.Drawing
-@using Size = Blazorise.Size
 
 <Modal @ref="_modal">
     <ModalContent>
         <ModalHeader>
-            <ModalTitle Size="HeadingSize.Is4">Edit Bookshelf</ModalTitle>
+            <ModalTitle Size="HeadingSize.Is4">Edit Book</ModalTitle>
             <CloseButton/>
         </ModalHeader>
         <ModalBody>
             <Validations @ref="_validations" Mode="ValidationMode.Manual" Model="@_model" HandlerType="typeof(FluentValidationHandler)">
                 <Validation>
                     <Field>
-                        <FieldLabel><Text Italic="@(_model?.Name is not null)">Name</Text></FieldLabel>
+                        <FieldLabel><Text Italic="@(_model?.Title is not null)">Title</Text></FieldLabel>
                         <FieldBody>
-                            <TextEdit Placeholder="@Bookshelf?.Name" @bind-Text="@_model.Name">
+                            <TextEdit Placeholder="@Book?.Metadata.Title" @bind-Text="@_model.Title">
                                 <Feedback>
                                     <ValidationError/>
                                 </Feedback>
@@ -26,25 +25,13 @@
                 </Validation>
                 <Validation>
                     <Field>
-                        <FieldLabel><Text Italic="@(_model?.Description is not null)">Description</Text></FieldLabel>
+                        <FieldLabel><Text Italic="@(_model?.Author is not null)">Author</Text></FieldLabel>
                         <FieldBody>
-                            <TextEdit Placeholder="@Bookshelf?.Description" @bind-Text="@_model.Description">
+                            <TextEdit Placeholder="@Book?.Metadata.Author" @bind-Text="@_model.Author">
                                 <Feedback>
                                     <ValidationError/>
                                 </Feedback>
                             </TextEdit>
-                        </FieldBody>
-                    </Field>
-                </Validation>
-                <Validation>
-                    <Field>
-                        <FieldLabel><Text Italic="@(_model?.Color is not null)">Color</Text></FieldLabel>
-                        <FieldBody>
-                            <ColorEdit Size="Size.Medium" @bind-Color="@_model.Color">
-                                <Feedback>
-                                    <ValidationError/>
-                                </Feedback>
-                            </ColorEdit>
                         </FieldBody>
                     </Field>
                 </Validation>
@@ -60,17 +47,17 @@
 
     [Parameter]
     [EditorRequired]
-    public Bookshelf? Bookshelf { get; set; }
+    public Book? Book { get; set; }
 
     [Parameter]
-    public EventCallback BookshelfUpdated { get; set; }
+    public EventCallback BookUpdated { get; set; }
 
     [Inject]
     private IBorowikManager BorowikManager { get; init; } = null!;
 
     private Modal _modal = null!;
     private Validations _validations = null!;
-    private EditBookshelfModel _model = new();
+    private EditBookModel _model = new();
 
     public async Task ShowAsync()
     {
@@ -79,25 +66,19 @@
 
     private async Task SaveAsync()
     {
-        if (Bookshelf is null)
+        if (Book is null)
             return;
 
         if (!await _validations.ValidateAll())
             return;
 
         await BorowikManager.SendRequestAsync(
-                new UpdateBookshelfRequest(
-                    Bookshelf.Id,
-                    _model.Name,
-                    _model.Description,
-                    _model.Color is null ? null : ColorTranslator.FromHtml(_model.Color)),
-                CancellationToken.None);
+                new UpdateBookRequest(Book.Id, _model.Title, _model.Author), CancellationToken.None);
 
         await _modal.Close(CloseReason.UserClosing);
-        await BookshelfUpdated.InvokeAsync();
+        await BookUpdated.InvokeAsync();
 
-        _model = new EditBookshelfModel();
+        _model = new EditBookModel();
         await _validations.ClearAll();
     }
-
 }

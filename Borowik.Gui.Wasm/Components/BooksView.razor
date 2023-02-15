@@ -25,8 +25,8 @@
     @foreach (var book in OrderBooks())
     {
         <Column ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnWidescreen.Is6.OnTablet.Is12.OnMobile">
-            <Button Type="ButtonType.Link" To="@($"/Book/{book.Id}")">
-                <Card>
+            <Card>
+                <Button Padding="Padding.Is0" Border="Border.Is0" Type="ButtonType.Link" To="@($"/Book/{book.Id}")">
                     @if (book.Metadata.Cover is null)
                     {
                         <CardImage Source="@($"https://picsum.photos/seed/{book.Id}/1024")"/>
@@ -35,13 +35,17 @@
                     {
                         <CardImage Source="@($"data:{book.Metadata.Cover.MimeType};base64,{Convert.ToBase64String(book.Metadata.Cover.Data)}")"/>
                     }
-                    <Progress Border="Border.RoundedZero" Value="@(Random.Shared.Next(1, 90))" Size="Size.Small"></Progress>
-                    <CardBody>
-                        <CardTitle Size="3">@book.Metadata.Title</CardTitle>
-                        <CardSubtitle>@book.Metadata.Author</CardSubtitle>
-                    </CardBody>
-                </Card>
-            </Button>
+                </Button>
+
+                <Progress Border="Border.RoundedZero" Value="@(Random.Shared.Next(1, 90))" Size="Size.Small"></Progress>
+                <CardBody>
+                    <CardTitle Size="3" Flex="Flex.JustifyContent.Between">
+                        @book.Metadata.Title
+                        <Button Clicked="() => OpenImportBookModalAsync(book)"><Icon Name="IconName.Edit"></Icon></Button>
+                    </CardTitle>
+                    <CardSubtitle>@book.Metadata.Author</CardSubtitle>
+                </CardBody>
+            </Card>
         </Column>
     }
 
@@ -58,6 +62,7 @@
     </Column>
 </Div>
 
+<EditBookModal Book="_bookToEdit" BookUpdated="BooksChanged" @ref="_editBookModal" />
 <ImportBookModal Bookshelf="Bookshelf" BookImported="BooksChanged" @ref="_importBookModal"/>
 
 @code
@@ -75,7 +80,16 @@
     [Inject]
     private ILoadingIndicatorService LoadingIndicatorService { get; init; } = null!;
 
+    private EditBookModal _editBookModal = null!;
+    private Book? _bookToEdit = null;
+
     private ImportBookModal _importBookModal = null!;
+
+    private async Task OpenImportBookModalAsync(Book book)
+    {
+        _bookToEdit = book;
+        await _editBookModal.ShowAsync();
+    }
 
     private async Task OpenImportBookModalAsync()
     {

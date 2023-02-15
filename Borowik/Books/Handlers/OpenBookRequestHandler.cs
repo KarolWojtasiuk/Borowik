@@ -31,8 +31,7 @@ internal class OpenBookRequestHandler : IRequestHandler<OpenBookRequest, OpenBoo
         await _bookRepository.UpdateAsync(book, cancellationToken);
         var data = await _bookRepository.GetDataAsync(request.BookId, cancellationToken)
                 ?? throw new BookExceptions.BookDataNotFoundException(request.BookId);
-        var pages = await _bookDataParser.ParseAsync(book.Metadata.Type, data, cancellationToken);
-        var content = new BookContent(book.Id, pages);
+        var content = await _bookDataParser.ParseAsync(book.Metadata.Type, data, cancellationToken);
 
         return new OpenBookResponse(book, content);
     }

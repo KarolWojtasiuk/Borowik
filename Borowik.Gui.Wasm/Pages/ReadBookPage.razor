@@ -5,11 +5,25 @@
 
 <DisplayHeading>@_book?.Metadata.Title</DisplayHeading>
 
-<Pagination Flex="Flex.Wrap">
-    @foreach(var number in GetNumberedPages().Select(p => p.Number))
+<Pagination Flex="Flex.Wrap.JustifyContent.Center">
+    @if (_numberedPages.Length > MaxPagesAround + 1)
     {
-        <PaginationItem Active="_selectedPage == number">
-            <PaginationLink Clicked="() => _selectedPage = number">@number</PaginationLink>
+        <PaginationItem Disabled="_selectedPage == 0">
+            <PaginationLink Clicked="() => _selectedPage = 0">@("<<")</PaginationLink>
+        </PaginationItem>
+    }
+
+    @foreach (var page in GetClampedPages())
+    {
+        <PaginationItem Active="_selectedPage == page.Number">
+            <PaginationLink Clicked="() => _selectedPage = page.Number">@(page.Number + 1)</PaginationLink>
+        </PaginationItem>
+    }
+
+    @if (_numberedPages.Length > MaxPagesAround + 1)
+    {
+        <PaginationItem Disabled="_selectedPage == _numberedPages.Length - 1">
+            <PaginationLink Clicked="() => _selectedPage = _numberedPages.Length - 1">>></PaginationLink>
         </PaginationItem>
     }
 </Pagination>
@@ -20,6 +34,8 @@
 
 @code
 {
+    private const int MaxPagesAround = 14;
+
     [Parameter]
     public Guid BookId { get; set; }
 
@@ -37,6 +53,8 @@
 
     private Book? _book;
     private BookContent? _content;
+
+    private (int Number, BookContentPage Page)[] _numberedPages = Array.Empty<(int, BookContentPage)>();
     private int _selectedPage;
 
     protected override async Task OnParametersSetAsync()
@@ -53,6 +71,7 @@
             var response = await BorowikManager.SendRequestAsync(new OpenBookRequest(BookId), CancellationToken.None);
             _book = response.Book;
             _content = response.Content;
+            _numberedPages = response.Content.Pages.Select((p, i) => (i, p)).OrderBy(p => p.i).ToArray();
         }
         catch (BookExceptions.BookNotFoundException e)
         {
@@ -65,11 +84,30 @@
         }
     }
 
-    private IEnumerable<(int Number, BookContentPage Page)> GetNumberedPages()
+    private IEnumerable<(int Number, BookContentPage Page)> GetClampedPages()
     {
-        return _content is null
-            ? Enumerable.Empty<(int Number, BookContentPage Page)>()
-            : _content.Pages.Select((p, i) => (i, p));
+        if (_numberedPages.Length <= MaxPagesAround + 1)
+            return _numberedPages;
+
+        var firstPage = 0;
+        var lastPage = _numberedPages.Length - 1;
+
+        var from = _selectedPage - MaxPagesAround / 2;
+        var to = _selectedPage + MaxPagesAround / 2;
+
+        if (from < firstPage)
+        {
+            to += firstPage - from;
+            from = firstPage;
+        }
+
+        if (to > lastPage)
+        {
+            from -= to - lastPage;
+            to = lastPage;
+        }
+
+        return _numberedPages[from..(to + 1)]; // range end is exclusive
     }
 
     private RenderFragment RenderSelectedPage() => builder =>

@@ -1,3 +1,4 @@
+using System.Text;
 using Borowik.Books.Entities;
 using Borowik.Services;
 using Scrutor;
@@ -25,16 +26,20 @@ internal class PdfBookDataTypeParser : IBookDataTypeParser
         return Task.FromResult(ParseMetadata(pdf));
     }
 
-    public Task<BookContentPage[]> ParseAsync(byte[] data, CancellationToken cancellationToken)
+    public Task<BookContent> ParseAsync(byte[] data, CancellationToken cancellationToken)
     {
         using var pdf = PdfDocument.Open(data);
-        var pages = pdf.GetPages().Select(ParsePage).ToArray();
+        var pages = pdf.GetPages()
+            .Select(ParsePage)
+            .Where(p => p.Nodes.Length > 0)
+            .ToArray();
 
-        return Task.FromResult(pages);
+        return Task.FromResult(new BookContent(pages));
     }
 
     private BookContentPage ParsePage(Page page)
     {
+        Console.WriteLine(page.Number);
         var nodes = new List<IBookContentNode>();
 
         if (!string.IsNullOrWhiteSpace(page.Text))
@@ -50,8 +55,6 @@ internal class PdfBookDataTypeParser : IBookDataTypeParser
 
             nodes.AddRange(images);
         }
-
-        Console.WriteLine($"Parsed page {page.Number}");
 
         return new BookContentPage(nodes.ToArray());
     }

@@ -22,12 +22,12 @@ internal class PlainTextBookDataTypeParser : IBookDataTypeParser
         return Task.FromResult(new BookMetadata("Plain Text", string.Empty, null, BookType.PlainText));
     }
 
-    public Task<BookContentPage[]> ParseAsync(byte[] data, CancellationToken cancellationToken)
+    public Task<BookContent> ParseAsync(byte[] data, CancellationToken cancellationToken)
     {
         var text = Encoding.UTF8.GetString(data);
         var node = new BookContentNodes.PlainTextNode(_guidProvider.Generate(), text);
         var pages = new [] { new BookContentPage(new IBookContentNode[] { node }) };
 
-        return Task.FromResult(pages);
+        return Task.FromResult(new BookContent(pages));
     }
 }

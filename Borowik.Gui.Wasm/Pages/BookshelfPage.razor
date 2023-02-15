@@ -1,6 +1,7 @@
 @page "/Bookshelf/{bookshelfId:guid}"
 @using Borowik.Books.Contracts
 @using Borowik.Books.Entities
+@using Borowik.Books
 
 <BookshelfHeader Bookshelf="_bookshelf" BookshelfUpdated="OnBookshelfUpdated"/>
 <BooksView Bookshelf="_bookshelf" BooksChanged="LoadBookshelfAsync"/>
@@ -11,13 +12,16 @@
     public Guid BookshelfId { get; set; }
 
     [Inject]
-    private IExceptionHandler ExceptionHandler { get; init; } = null!;
-
-    [Inject]
     private IBorowikManager BorowikManager { get; init; } = null!;
 
     [Inject]
     private ILoadingIndicatorService LoadingIndicatorService { get; init; } = null!;
+
+    [Inject]
+    private INotificationService NotificationService { get; init; } = null!;
+
+    [Inject]
+    private NavigationManager NavigationManager { get; init; } = null!;
 
     private BookshelfWithBooks? _bookshelf;
 
@@ -30,12 +34,20 @@
     {
         await LoadingIndicatorService.Show();
 
-        var response = await ExceptionHandler.HandleAsync(() =>
-            BorowikManager.SendRequestAsync(new GetBookshelfRequest(BookshelfId), CancellationToken.None));
-
-        _bookshelf = response.BookshelfWithBooks;
-
-        await LoadingIndicatorService.Hide();
+        try
+        {
+            var response = await BorowikManager.SendRequestAsync(new GetBookshelfRequest(BookshelfId), CancellationToken.None);
+            _bookshelf = response.BookshelfWithBooks;
+        }
+        catch (BookExceptions.BookshelfNotFoundException e)
+        {
+            await NotificationService.Error(e.Message, "Error");
+            NavigationManager.NavigateTo("/");
+        }
+        finally
+        {
+            await LoadingIndicatorService.Hide();
+        }
     }
 
     private async Task OnBookshelfUpdated()

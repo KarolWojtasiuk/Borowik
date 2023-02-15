@@ -16,19 +16,11 @@ internal class BookRepository : IBookRepository
         _dbProvider = dbProvider;
     }
 
-    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Book?> GetAsync(Guid id, CancellationToken cancellationToken)
     {
         var db = await _dbProvider.GetAsync();
-        return await db.BookEntities().Get(id) is not null;
-    }
-
-    public async Task<Book> GetAsync(Guid id, CancellationToken cancellationToken)
-    {
-        var db = await _dbProvider.GetAsync();
-        var entity = await db.BookEntities().Get(id)
-                     ?? throw new BorowikException($"Book with Id '{id}' does not exist in database");
-
-        return entity.Map();
+        var entity = await db.BookEntities().Get(id);
+        return entity?.Map();
     }
 
     public async Task<Book[]> GetAllAsync(Guid bookshelfId, CancellationToken cancellationToken)
@@ -38,13 +30,11 @@ internal class BookRepository : IBookRepository
         return books.Select(b => b.Map()).ToArray();
     }
 
-    public async Task<byte[]> GetDataAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<byte[]?> GetDataAsync(Guid id, CancellationToken cancellationToken)
     {
         var db = await _dbProvider.GetAsync();
-        var entity = await db.BookDataEntities().Get(id)
-                     ?? throw new BorowikException($"Book with Id '{id}' does not exist in database");
-
-        return entity.Data;
+        var entity = await db.BookDataEntities().Get(id);
+        return entity?.Data;
     }
 
     public async Task CreateAsync(Book book, byte[] data, CancellationToken cancellationToken)

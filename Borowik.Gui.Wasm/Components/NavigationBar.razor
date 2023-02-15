@@ -52,9 +52,6 @@
 @code
 {
     [Inject]
-    private IExceptionHandler ExceptionHandler { get; init; } = null!;
-
-    [Inject]
     private IBorowikManager BorowikManager { get; init; } = null!;
 
     [Inject]
@@ -70,8 +67,7 @@
 
     private async Task LoadBookshelvesAsync()
     {
-        var response = await ExceptionHandler.HandleAsync(() =>
-            BorowikManager.SendRequestAsync(new GetBookshelvesRequest()));
+        var response = await BorowikManager.SendRequestAsync(new GetBookshelvesRequest());
         _bookshelves = response.Bookshelves;
     }
 

@@ -70,9 +70,6 @@
     public EventCallback BooksChanged { get; set; }
 
     [Inject]
-    private IExceptionHandler ExceptionHandler { get; init; } = null!;
-
-    [Inject]
     private IBorowikManager BorowikManager { get; init; } = null!;
 
     [Inject]
@@ -113,8 +110,7 @@
 
         await LoadingIndicatorService.Show();
 
-        await ExceptionHandler.HandleAsync(() =>
-            BorowikManager.SendRequestAsync(new UpdateBookshelfRequest(Bookshelf.Id, SortMode: sortMode)));
+        await BorowikManager.SendRequestAsync(new UpdateBookshelfRequest(Bookshelf.Id, SortMode: sortMode));
 
         Bookshelf = Bookshelf with { SortMode = sortMode };
 

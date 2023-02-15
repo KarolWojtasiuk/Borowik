@@ -14,7 +14,9 @@ internal class UpdateBookshelfRequestHandler : IRequestHandler<UpdateBookshelfRe
 
     public async Task<UpdateBookshelfResponse> Handle(UpdateBookshelfRequest request, CancellationToken cancellationToken)
     {
-        var bookshelf = await _bookshelfRepository.GetAsync(request.BookshelfId, cancellationToken);
+        var bookshelf = await _bookshelfRepository.GetAsync(request.BookshelfId, cancellationToken)
+                        ?? throw new BookExceptions.BookshelfNotFoundException(request.BookshelfId);
+
 
         bookshelf = bookshelf with
         {

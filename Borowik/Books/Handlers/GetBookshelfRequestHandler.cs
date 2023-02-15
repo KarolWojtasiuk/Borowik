@@ -19,12 +19,12 @@ internal class GetBookshelfRequestHandler : IRequestHandler<GetBookshelfRequest,
 
     public async Task<GetBookshelfResponse> Handle(GetBookshelfRequest request, CancellationToken cancellationToken)
     {
-        if (!await _bookshelfRepository.ExistsAsync(request.BookshelfId, cancellationToken))
-            throw new BorowikException($"Bookshelf with Id '{request.BookshelfId}' does not exist");
+        var bookshelf = await _bookshelfRepository.GetAsync(request.BookshelfId, cancellationToken)
+            ?? throw new BookExceptions.BookshelfNotFoundException(request.BookshelfId);
 
-        var bookshelf = await _bookshelfRepository.GetAsync(request.BookshelfId, cancellationToken);
 
         var books = await _bookRepository.GetAllAsync(request.BookshelfId, cancellationToken);
+
         return new GetBookshelfResponse(new BookshelfWithBooks(bookshelf, books));
     }
 }

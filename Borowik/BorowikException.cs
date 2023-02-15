@@ -1,8 +1,8 @@
 namespace Borowik;
 
-public class BorowikException : Exception
+public abstract class BorowikException : Exception
 {
-    public BorowikException(string? message) : base(message)
+    protected BorowikException(string? message) : base(message)
     {
     }
 }

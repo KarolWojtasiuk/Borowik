@@ -1,6 +1,7 @@
 @page "/Book/{bookId:guid}"
 @using Borowik.Books.Entities
 @using Borowik.Books.Contracts
+@using Borowik.Books
 
 <DisplayHeading>@_book?.Metadata.Title</DisplayHeading>
 
@@ -23,13 +24,16 @@
     public Guid BookId { get; set; }
 
     [Inject]
-    private IExceptionHandler ExceptionHandler { get; init; } = null!;
-
-    [Inject]
     private IBorowikManager BorowikManager { get; init; } = null!;
 
     [Inject]
     private ILoadingIndicatorService LoadingIndicatorService { get; init; } = null!;
+
+    [Inject]
+    private INotificationService NotificationService { get; init; } = null!;
+
+    [Inject]
+    private NavigationManager NavigationManager { get; init; } = null!;
 
     private Book? _book;
     private BookContent? _content;
@@ -44,13 +48,21 @@
     {
         await LoadingIndicatorService.Show();
 
-        var response = await ExceptionHandler.HandleAsync(() =>
-            BorowikManager.SendRequestAsync(new OpenBookRequest(BookId), CancellationToken.None));
-
-        _book = response.Book;
-        _content = response.Content;
-
-        await LoadingIndicatorService.Hide();
+        try
+        {
+            var response = await BorowikManager.SendRequestAsync(new OpenBookRequest(BookId), CancellationToken.None);
+            _book = response.Book;
+            _content = response.Content;
+        }
+        catch (BookExceptions.BookNotFoundException e)
+        {
+            await NotificationService.Error(e.Message, "Error");
+            NavigationManager.NavigateTo("/");
+        }
+        finally
+        {
+            await LoadingIndicatorService.Hide();
+        }
     }
 
     private IEnumerable<(int Number, BookContentPage Page)> GetNumberedPages()

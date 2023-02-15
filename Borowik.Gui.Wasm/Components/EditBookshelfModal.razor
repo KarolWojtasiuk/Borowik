@@ -66,9 +66,6 @@
     public EventCallback BookshelfUpdated { get; set; }
 
     [Inject]
-    private IExceptionHandler ExceptionHandler { get; init; } = null!;
-
-    [Inject]
     private IBorowikManager BorowikManager { get; init; } = null!;
 
     private Modal _modal = null!;
@@ -88,14 +85,13 @@
         if (!await _validations.ValidateAll())
             return;
 
-        var response = await ExceptionHandler.HandleAsync(() =>
-            BorowikManager.SendRequestAsync(
+        var response = await BorowikManager.SendRequestAsync(
                 new UpdateBookshelfRequest(
                     Bookshelf.Id,
                     _model.Name,
                     _model.Description,
                     _model.Color is null ? null : ColorTranslator.FromHtml(_model.Color)),
-                CancellationToken.None));
+                CancellationToken.None);
 
         await _modal.Close(CloseReason.UserClosing);
         await BookshelfUpdated.InvokeAsync();

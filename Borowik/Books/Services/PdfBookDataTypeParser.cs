@@ -59,9 +59,10 @@ internal class PdfBookDataTypeParser : IBookDataTypeParser
     private static BookMetadata ParseMetadata(PdfDocument pdf)
     {
         var title = pdf.Information.Title;
+        var author = pdf.Information.Author;
         return new BookMetadata(
-            string.IsNullOrEmpty(title) ? "PDF File" : title,
-            pdf.Information.Author,
+            string.IsNullOrWhiteSpace(title) ? "PDF File" : title,
+            string.IsNullOrWhiteSpace(author) ? string.Empty : author,
             GetCoverImage(pdf),
             BookType.Pdf);
     }

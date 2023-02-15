@@ -22,13 +22,11 @@ internal class BookshelfRepository : IBookshelfRepository
         return await db.BookshelfEntities().Get(id) is not null;
     }
 
-    public async Task<Bookshelf> GetAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Bookshelf?> GetAsync(Guid id, CancellationToken cancellationToken)
     {
         var db = await _dbProvider.GetAsync();
-        var entity = await db.BookshelfEntities().Get(id)
-                     ?? throw new BorowikException($"Bookshelf with Id '{id}' does not exist in database");
-
-        return entity.Map();
+        var entity = await db.BookshelfEntities().Get(id);
+        return entity?.Map();
     }
 
     public async Task<Bookshelf[]> GetAllAsync(CancellationToken cancellationToken)

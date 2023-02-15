@@ -31,7 +31,7 @@ internal class ImportBookRequestHandler : IRequestHandler<ImportBookRequest, Imp
     public async Task<ImportBookResponse> Handle(ImportBookRequest request, CancellationToken cancellationToken)
     {
         if (!await _bookshelfRepository.ExistsAsync(request.BookshelfId, cancellationToken))
-            throw new BorowikException($"Bookshelf with Id '{request.BookshelfId}' does not exist");
+            throw new BookExceptions.BookshelfNotFoundException(request.BookshelfId);
 
         var metadata = await _bookDataParser.ExtractMetadataAsync(request.Type, request.Data, cancellationToken);
 

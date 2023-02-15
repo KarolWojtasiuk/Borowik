@@ -73,9 +73,6 @@
     public EventCallback BookImported { get; set; }
 
     [Inject]
-    private IExceptionHandler ExceptionHandler { get; init; } = null!;
-
-    [Inject]
     private IBorowikManager BorowikManager { get; init; } = null!;
 
     [Inject]
@@ -115,19 +112,12 @@
 
         await LoadingIndicatorService.Show();
 
-        await ExceptionHandler.HandleAsync(async () =>
-        {
-            var stopwatch = Stopwatch.StartNew();
+        await using var fileStream = _file.OpenReadStream(100 * 1024 * 1024 /* 100MiB */);
+        await using var memoryStream = new MemoryStream();
+        await fileStream.CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
 
-            await using var fileStream = _file.OpenReadStream(100 * 1024 * 1024 /* 100MiB */);
-            await using var memoryStream = new MemoryStream();
-            await fileStream.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-
-            await BorowikManager.SendRequestAsync(new ImportBookRequest(Bookshelf.Id, _selectedBookType, memoryStream.ToArray()));
-            stopwatch.Stop();
-            Console.WriteLine($"Imported book in {stopwatch.ElapsedMilliseconds}ms");
-        });
+        await BorowikManager.SendRequestAsync(new ImportBookRequest(Bookshelf.Id, _selectedBookType, memoryStream.ToArray()));
 
         await BookImported.InvokeAsync();
         await LoadingIndicatorService.Hide();
@@ -140,13 +130,11 @@
         if (Bookshelf is null)
             return;
 
-        await ExceptionHandler.HandleAsync(async () =>
-        {
-            var content = string.Join('|', _debugTitle, _debugAuthor, _debugContent);
-            var bytes = Encoding.UTF8.GetBytes(content);
-            using var memoryStream = new MemoryStream(bytes);
-            await BorowikManager.SendRequestAsync(new ImportBookRequest(Bookshelf.Id, BookType.Debug, memoryStream.ToArray()));
-        });
+        var content = string.Join('|', _debugTitle, _debugAuthor, _debugContent);
+        var bytes = Encoding.UTF8.GetBytes(content);
+        using var memoryStream = new MemoryStream(bytes);
+        await BorowikManager.SendRequestAsync(new ImportBookRequest(Bookshelf.Id, BookType.Debug, memoryStream.ToArray()));
+
         await BookImported.InvokeAsync();
         await LoadingIndicatorService.Hide();
 
@@ -163,9 +151,11 @@
         return true;
 #endif
 
+// ReSharper disable HeuristicUnreachableCode
 #pragma warning disable CS0162
         return false;
 #pragma warning restore CS0162
+// ReSharper restore HeuristicUnreachableCode
     }
 
 }

@@ -24,14 +24,13 @@ internal class OpenBookRequestHandler : IRequestHandler<OpenBookRequest, OpenBoo
 
     public async Task<OpenBookResponse> Handle(OpenBookRequest request, CancellationToken cancellationToken)
     {
-        if (!await _bookRepository.ExistsAsync(request.BookId, cancellationToken))
-            throw new BorowikException($"Book with Id '{request.BookId}' does not exist");
-
-        var book = await _bookRepository.GetAsync(request.BookId, cancellationToken);
+        var book = await _bookRepository.GetAsync(request.BookId, cancellationToken)
+                   ?? throw new BookExceptions.BookNotFoundException(request.BookId);
         book = book with { LastOpenedAt = _dateTimeProvider.GetUtcNew() };
 
         await _bookRepository.UpdateAsync(book, cancellationToken);
-        var data = await _bookRepository.GetDataAsync(request.BookId, cancellationToken);
+        var data = await _bookRepository.GetDataAsync(request.BookId, cancellationToken)
+                ?? throw new BookExceptions.BookDataNotFoundException(request.BookId);
         var pages = await _bookDataParser.ParseAsync(book.Metadata.Type, data, cancellationToken);
         var content = new BookContent(book.Id, pages);
 

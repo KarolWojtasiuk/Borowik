@@ -8,7 +8,6 @@ using Borowik.Database.Dexie;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Borowik.Gui.Wasm;
-using Borowik.Gui.Wasm.Services;
 using FluentValidation;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -18,7 +17,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services
     .AddBorowik()
     .AddBorowikDexie()
-    .AddScoped<IExceptionHandler, ExceptionHandler>()
     .AddBlazorise(o => { o.Immediate = true; })
     .AddBootstrap5Providers()
     .AddFontAwesomeIcons()

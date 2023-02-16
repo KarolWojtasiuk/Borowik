@@ -12,7 +12,7 @@
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
         <PackageReference Include="SixLabors.ImageSharp" />
-        <PackageReference Include="PdfPig" />
         <PackageReference Include="VersOne.Epub" />
+        <PackageReference Include="PdfPig" />
     </ItemGroup>
 </Project>
